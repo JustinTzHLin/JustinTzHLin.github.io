@@ -29,16 +29,7 @@
 		
 		<script type="text/javascript">
 			$(document).ready(function(){
-				
-				$(".btn_lost").click(function(){
-					window.location.href="lost/lost_index.php";
-				});
-				
-				$(".btn_found").click(function(){
-					window.location.href="found/found_index.php";
-				});
-				
-				$(".btn_administrator").click(function(){
+				$(".btn_start").click(function(){
 					window.location.href="admin/admin_index.php";
 				});
 			});
@@ -91,28 +82,18 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-12 col-md-8 offset-md-2">
-					<div class="lost-and-found_interface row">
+					<div class="split_bills_interface row">
 						<div class="col-12">
 							<div class="row">
 								
 								<!-- 標題 -->
 								<div class="d-grid col-12">
-									<button class="btn btn-outline-dark lost-and-found_title" name="lost-and-found_title">Lost-and-Found</button>
-								</div>
-								
-								<!-- 遺失物列表 -->
-								<div class="d-grid col-12 col-sm-6">
-									<input type="button" class="btn btn-outline-primary btn_lost" name="btn_lost" value="遺失物查詢">
-								</div>
-								
-								<!-- 拾得遺失物 -->
-								<div class="d-grid col-12 col-sm-6">
-									<input type="button" class="btn btn-outline-success btn_found" name="btn_found" value="拾得遺失物">
+									<button class="btn btn-outline-dark split_bills_title" name="lost-and-found_title">Split Bills 分帳</button>
 								</div>
 								
 								<!-- 拾得遺失物 -->
 								<div class="d-grid col-12">
-									<input type="button" class="btn btn-outline-secondary btn_administrator" name="btn_administrator" value="管理者登入">
+									<input type="button" class="btn btn-outline-secondary btn_start" name="btn_administrator" value="Start!">
 								</div>
 							</div>
 						</div>

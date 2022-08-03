@@ -1,26 +1,16 @@
-.lost-and-found_interface{
+.split_bills_interface{
 	border-radius:20px;
 	padding:50px;
 	margin-top:100px;
 	background-color:rgb(255,255,255);
 	box-shadow:0px 0px 8px 0px rgba(0,0,0,0.1);
 }
-.lost-and-found_title{
+.split_bills_title{
 	font-size:30px;
 	text-align:center;
 	padding:20px;
 }
-.btn_lost{
-	padding:10px;
-	margin-top:25px;
-	font-size:20px;
-}
-.btn_found{
-	padding:10px;
-	margin-top:25px;
-	font-size:20px;
-}
-.btn_administrator{
+.btn_start{
 	padding:10px;
 	margin-top:25px;
 	font-size:20px;
