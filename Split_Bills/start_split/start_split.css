@@ -1,15 +1,64 @@
-.split_bills_interface{
+.number_of_people{
+	height:50vh;
+}
+.number_of_people_interface{
 	border-radius:20px;
 	padding:50px;
-	margin-top:100px;
+	//margin:10px;
 	background-color:rgb(255,255,255);
 	box-shadow:0px 0px 8px 0px rgba(0,0,0,0.1);
 }
-.split_bills_title{
+.number_of_people_title{
 	font-size:30px;
 	text-align:center;
 	padding:20px;
 }
+
+.split_result{
+	height:50vh;
+}
+.split_result_interface{
+	border-radius:20px;
+	padding:50px;
+	background-color:rgb(255,255,255);
+	box-shadow:0px 0px 8px 0px rgba(0,0,0,0.1);
+}
+.split_result_title{
+	font-size:30px;
+	text-align:center;
+	padding:20px;
+}
+
+.expenses{
+	height:70vh;
+}
+.expenses_interface{
+	border-radius:20px;
+	padding:50px;
+	background-color:rgb(255,255,255);
+	box-shadow:0px 0px 8px 0px rgba(0,0,0,0.1);
+}
+.expenses_title{
+	font-size:30px;
+	text-align:center;
+	padding:20px;
+}
+
+.split_conditions{
+	height:30vh;
+}
+.split_conditions_interface{
+	border-radius:20px;
+	padding:50px;
+	background-color:rgb(255,255,255);
+	box-shadow:0px 0px 8px 0px rgba(0,0,0,0.1);
+}
+.split_conditions_title{
+	font-size:30px;
+	text-align:center;
+	padding:20px;
+}
+
 .btn_start{
 	padding:15px;
 	margin-top:25px;
