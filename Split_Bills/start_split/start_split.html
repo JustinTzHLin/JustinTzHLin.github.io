@@ -29,8 +29,41 @@
 		
 		<script type="text/javascript">
 			$(document).ready(function(){
-				$(".btn_start").click(function(){
-					window.location.href="start_split/start_split.html";
+				$(".new_people_btn").click(function(){
+					$.confirm({
+						title:"Add name!",
+						content:''+
+						'<form action="" class="formName">'+
+							'<div class="form-group">'+
+								'<input type="text" placeholder="At most 10 characters" class="name form-control" required />'+
+							'</div>'+
+						'</form>',
+						buttons: {
+							formSubmit: {
+								text:"Submit",
+								btnClass:"btn-blue",
+								action: function () {
+									var name = this.$content.find('.name').val();
+									if(!name){
+										$.alert("Please enter a valid name.");
+										return false;
+									}
+									$.alert('Your name is ' + name);
+								}
+							},
+							cancel: function(){
+							}
+						},
+						onContentReady: function () {
+							// bind to events
+							var jc = this;
+							this.$content.find('form').on('submit', function (e) {
+								// if the user submits the form by pressing enter in the field.
+								e.preventDefault();
+								jc.$$formSubmit.trigger('click'); // reference the button and click it
+							});
+						}
+					});
 				});
 			});
 		</script>
