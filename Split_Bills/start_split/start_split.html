@@ -19,6 +19,7 @@
 		<!-- 引入bootstrap -->
 		<link rel=stylesheet type="text/css" href="../library/bootstrap_library/css/bootstrap.css">
 		<script type="text/javascript" src="../library/bootstrap_library/js/bootstrap.js"></script>
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
 		
 		<!-- 引入jquery-confirm -->
 		<link rel=stylesheet type="text/css" href="../library/jquery_library/jquery-confirm-v3.3.4/dist/jquery-confirm.min.css">
@@ -29,29 +30,104 @@
 		
 		<script type="text/javascript">
 			$(document).ready(function(){
+				
+				<!-- 新增朋友按鈕事件 -->
+				new_people();
+			});
+			
+			<!-- 新增朋友按鈕事件 -->
+			function new_people(){
 				$(".new_people_btn").click(function(){
+					
+					<!-- 新增朋友視窗 -->
 					$.confirm({
-						title:"Add name!",
+						title:"新增朋友：",
 						content:''+
 						'<form action="" class="formName">'+
 							'<div class="form-group">'+
-								'<input type="text" placeholder="At most 10 characters" class="name form-control" required />'+
+								'<input type="text" placeholder="不超過十個字" class="name form-control" required />'+
 							'</div>'+
 						'</form>',
 						buttons: {
+							
+							<!-- 確認新增朋友 -->
 							formSubmit: {
-								text:"Submit",
+								text:"確定",
 								btnClass:"btn-blue",
 								action: function () {
 									var name = this.$content.find('.name').val();
 									if(!name){
-										$.alert("Please enter a valid name.");
+										$.alert("請輸入名字");
 										return false;
 									}
-									$.alert('Your name is ' + name);
+									$.alert({
+										title: "",
+										content: "已新增朋友："+name,
+										buttons: {
+											okBtn: {
+											text:"OK",
+												keys: ['esc','enter'],
+												action:	function(){}
+											}
+										}
+									});
+									
+									<!-- 判斷是否為第一次添加朋友 -->
+									if($("#name_table").length){
+										var name_index=$(".form_name tbody tr").length;
+										$(".form_name tbody").append(''+
+											'<tr>'+
+												'<th scope="col" style="vertical-align:middle">'+(name_index+1)+'</th>'+
+												'<td scope="col" style="vertical-align:middle">'+name+'</td>'+
+												'<td scope="col" style="text-align:center">'+
+													'<i class="bi bi-pencil-square name_edit_button"></i>'+
+												'</td>'+
+												'<td scope="col" style="text-align:center">'+
+													'<i class="bi bi-x-square name_delete_button"></i>'+
+												'</td>'+
+											'</tr>'
+										);
+									}
+									else{
+										$(".form_name").append(''+
+											'<table id="name_table" class="table table-striped table-hover table-bordered table-bg">'+
+												'<thead>'+
+													'<tr>'+
+														'<th scope="col">#</th>'+
+														'<th scope="col">名字</th>'+
+														'<th scope="col">修改</th>'+
+														'<th scope="col">刪除</th>'+
+													'</tr>'+
+												'</thead>'+
+												'<tbody>'+
+													'<tr>'+
+														'<th scope="col" style="vertical-align:middle">1</th>'+
+														'<td scope="col" style="vertical-align:middle">'+name+'</td>'+
+														'<td scope="col" style="text-align:center">'+
+															'<i class="bi bi-pencil-square name_edit_button"></i>'+
+														'</td>'+
+														'<td scope="col" style="text-align:center">'+
+															'<i class="bi bi-x-square name_delete_button"></i>'+
+														'</td>'+
+													'</tr>'+
+												'</tbody>'+
+											'</table>'
+										);
+									}
+									
+									<!-- 名字刪除按鈕事件 -->
+									name_delete();
+									
+									<!-- 設定名字修改按鈕 -->
+									name_edit();
 								}
 							},
-							cancel: function(){
+							
+							<!-- 取消新增朋友 -->
+							cancelBtn: {
+								text:"取消",
+								keys: ['esc'],
+								action:	function(){}
 							}
 						},
 						onContentReady: function () {
@@ -62,10 +138,54 @@
 								e.preventDefault();
 								jc.$$formSubmit.trigger('click'); // reference the button and click it
 							});
+							
+							//預覽輸入框
+							$("input").focus();
 						}
 					});
 				});
-			});
+			}
+			
+			<!-- 名字刪除按鈕事件 -->
+			function name_delete(){
+				$(".name_delete_button").click(function(){
+					let name=$(this).parent().parent().find("td").first().text();
+					$.confirm({
+						title: "確定刪除此人？",
+						content: name,
+						buttons: {
+							deleteBtn: {
+								text: "刪除",
+								btnClass: 'btn-red',
+								keys: ['enter','shift'],
+								action: function(){
+									$.alert({
+										title: "",
+										content: '刪除 '+name+' 成功',
+										buttons: {
+											okBtn: {
+											text:"OK",
+												keys: ['esc','enter'],
+												action:	function(){}
+											}
+										}
+									});
+									//刪除朋友
+								}
+							},
+							cancelBtn: {
+								text:"取消",
+								keys: ['esc'],
+								action:	function(){}
+							}
+						}
+					});
+				});
+				
+				<!-- 名字修改按鈕事件 -->
+				function name_edit(){
+				}
+			}
 		</script>
 		<style type="text/css">
 			.title{
@@ -121,9 +241,13 @@
 								<div class="number_of_people_interface col-12">
 									<div class="row">
 										
-										<!-- 標題 -->
+										<!-- 朋友名單 -->
+										<div class="col-12 form_name">
+										</div>
+										
+										<!-- 新增朋友 -->
 										<div class="d-grid col-6 offset-3">
-											<button class="btn btn-outline-dark new_people_btn" name="lost-and-found_title">新增朋友</button>
+											<button class="btn btn-outline-dark new_people_btn" name="new_people_btn">新增朋友</button>
 										</div>
 									</div>
 								</div>
