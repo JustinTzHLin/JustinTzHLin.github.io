@@ -16,10 +16,17 @@
 		<script type="text/javascript" src="../library/jquery_library/jquery-ui-1.13.0.custom/jquery-ui.js"></script>
 		<link rel=stylesheet type="text/css" href="../library/jquery_library/jquery-ui-1.13.0.custom/jquery-ui.css">
 		
+		<!-- 引入Popper相關 -->
+		<!--
+		<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+		-->
+		
 		<!-- 引入bootstrap -->
 		<link rel=stylesheet type="text/css" href="../library/bootstrap_library/css/bootstrap.css">
 		<script type="text/javascript" src="../library/bootstrap_library/js/bootstrap.js"></script>
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+		<!--<script type="text/javascript" src="../library/bootstrap_library/js/bootstrap.bundle.js"></script>-->
 		
 		<!-- 引入jquery-confirm -->
 		<link rel=stylesheet type="text/css" href="../library/jquery_library/jquery-confirm-v3.3.4/dist/jquery-confirm.min.css">
@@ -130,8 +137,8 @@
 													'<tr>'+
 														'<th scope="col">#</th>'+
 														'<th scope="col">名字</th>'+
-														'<th scope="col">修改</th>'+
-														'<th scope="col">刪除</th>'+
+														'<th scope="col" style="text-align:center">修改</th>'+
+														'<th scope="col" style="text-align:center">刪除</th>'+
 													'</tr>'+
 												'</thead>'+
 												'<tbody>'+
@@ -223,6 +230,12 @@
 											$(this).find("th").text(index+1);
 										}
 									});
+									
+									// 若已經沒有朋友則清除Table
+									console.log($("#name_table tbody tr").length);
+									if(!$("#name_table tbody tr").length){
+										$("#name_table").remove();
+									}
 								}
 							},
 							cancelBtn: {
@@ -266,7 +279,7 @@
 										$.alert({
 											title: "",
 											type: "red",
-											content: "請輸入名字",
+											content: "請輸入名名稱",
 											buttons: {
 												okBtn: {
 												text:"OK",
@@ -279,11 +292,11 @@
 										});
 										return false;
 									}
-									else if(name.length>10){
+									else if(name.length>20){
 										$.alert({
 											title: "",
 											type: "red",
-											content: "請輸入10字以內",
+											content: "請輸入20字以內",
 											buttons: {
 												okBtn: {
 												text:"OK",
@@ -343,7 +356,154 @@
 			// 新增帳目按鈕事件
 			function new_expense(){
 				$(".new_expense_btn").click(function(){
-					
+					$.confirm({
+						title:"新增帳目：",
+						columnClass: "large",
+						content:''+
+							'<form action="" class="formName">'+
+								'<div class="form-group">'+
+									'<div class="input-group" style="padding:3px;">'+
+										'<input type="text" placeholder="20字以內" style="width:35%;" class="form-control" required/>'+
+										'<button class="btn" type="button" style="padding:0px;border:0px;">'+
+											'<select class="form-select" style="border-radius:0px;" aria-label="Default select example">'+
+												'<option value="group">團體</option>'+
+												'<option value="personal">個人</option>'+
+											'</select>'+
+										'</button>'+
+										'<input type="number" placeholder="總金額" style="text-align:right;" class="form-control" required/>'+
+										'<span class="input-group-text">TWD</span>'+
+									'</div>'+
+								'</div>'+
+							'</form>',
+						buttons: {
+							
+							// 彈出新增朋友確認框
+							formSubmit: {
+								text:"確定",
+								btnClass:"btn-blue",
+								action: function () {
+									var name = this.$content.find('.name').val();
+									if(!name){
+										$.alert({
+											title: "",
+											type: "red",
+											content: "請輸入名字",
+											buttons: {
+												okBtn: {
+												text:"OK",
+													keys: ["esc","enter"],
+													action:	function(){
+														$(".jconfirm").find("input").focus();
+													}
+												}
+											}
+										});
+										return false;
+									}
+									else if(name.length>10){
+										$.alert({
+											title: "",
+											type: "red",
+											content: "請輸入10字以內",
+											buttons: {
+												okBtn: {
+												text:"OK",
+													keys: ["esc","enter"],
+													action:	function(){
+														$(".jconfirm").find("input").focus();
+													}
+												}
+											}
+										});
+										return false;
+									}
+									$.alert({
+										title: "",
+										type: "green",
+										content: "已新增朋友："+name,
+										autoClose: 'okBtn|1',
+										buttons: {
+											okBtn: {
+											text:"OK",
+												keys: ["esc","enter"],
+												action:	function(){}
+											}
+										}
+									});
+									
+									// 判斷是否為第一次添加朋友
+									if($("#name_table").length){
+										var name_index=$(".form_name tbody tr").length;
+										$(".form_name tbody").append(''+
+											'<tr>'+
+												'<th scope="col" style="vertical-align:middle">'+(name_index+1)+'</th>'+
+												'<td scope="col" style="vertical-align:middle">'+name+'</td>'+
+												'<td scope="col" style="text-align:center">'+
+													'<button class="bi bi-pencil-square name_edit_button"></button>'+
+												'</td>'+
+												'<td scope="col" style="text-align:center">'+
+													'<button class="bi bi-x-square name_delete_button"></button>'+
+												'</td>'+
+											'</tr>'
+										);
+									}
+									else{
+										$(".form_name").append(''+
+											'<table id="name_table" class="table table-striped table-hover table-bordered table-bg">'+
+												'<thead>'+
+													'<tr>'+
+														'<th scope="col">#</th>'+
+														'<th scope="col">名字</th>'+
+														'<th scope="col" style="text-align:center">修改</th>'+
+														'<th scope="col" style="text-align:center">刪除</th>'+
+													'</tr>'+
+												'</thead>'+
+												'<tbody>'+
+													'<tr>'+
+														'<th scope="col" style="vertical-align:middle">1</th>'+
+														'<td scope="col" style="vertical-align:middle">'+name+'</td>'+
+														'<td scope="col" style="text-align:center">'+
+															'<button class="bi bi-pencil-square name_edit_button"></button>'+
+														'</td>'+
+														'<td scope="col" style="text-align:center">'+
+															'<button class="bi bi-x-square name_delete_button"></button>'+
+														'</td>'+
+													'</tr>'+
+												'</tbody>'+
+											'</table>'
+										);
+									}
+									
+									// 名字刪除按鈕事件
+									name_delete();
+									
+									// 設定名字修改按鈕
+									name_edit();
+								}
+							},
+							
+							// 取消新增朋友
+							cancelBtn: {
+								text:"取消",
+								keys: ["esc"],
+								action:	function(){}
+							}
+						},
+						onContentReady: function () {
+							// bind to events
+							var jc = this;
+							this.$content.find('form').on('submit', function (e) {
+								// if the user submits the form by pressing enter in the field.
+								e.preventDefault();
+								jc.$$formSubmit.trigger('click'); // reference the button and click it
+							});
+							
+							// 預覽輸入框
+							$(".jconfirm").find("input").focus();
+							
+							//$(".jconfirm").find(".expense").css("oninput","value=value.replace(/[^\d]/g,'')");
+						}
+					});
 				});
 			}
 		</script>
@@ -434,6 +594,10 @@
 							<div class="row">
 								<div class="expenses_interface col-12">
 									<div class="row">
+										
+										<!-- 帳目明細 -->
+										<div class="col-12 form_expense">
+										</div>
 										
 										<!-- 新增帳目 -->
 										<div class="d-grid col-6 offset-3">
