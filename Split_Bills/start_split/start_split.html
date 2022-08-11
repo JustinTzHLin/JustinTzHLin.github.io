@@ -31,23 +31,23 @@
 		<script type="text/javascript">
 			$(document).ready(function(){
 				
-				<!-- 新增朋友按鈕事件 -->
+				// 新增朋友按鈕事件
 				new_people();
 			});
 			
-			<!-- 新增朋友按鈕事件 -->
+			// 新增朋友按鈕事件
 			function new_people(){
 				$(".new_people_btn").click(function(){
 					
-					<!-- 新增朋友視窗 -->
+					// 新增朋友視窗
 					$.confirm({
 						title:"新增朋友：",
 						content:''+
-						'<form action="" class="formName">'+
-							'<div class="form-group">'+
-								'<input type="text" placeholder="不超過十個字" class="name form-control" required />'+
-							'</div>'+
-						'</form>',
+							'<form action="" class="formName">'+
+								'<div class="form-group">'+
+									'<input type="text" placeholder="不超過十個字" class="name form-control" required />'+
+								'</div>'+
+							'</form>',
 						buttons: {
 							
 							// 彈出新增朋友確認框
@@ -66,7 +66,7 @@
 										buttons: {
 											okBtn: {
 											text:"OK",
-												keys: ['esc','enter'],
+												keys: ["esc","enter"],
 												action:	function(){}
 											}
 										}
@@ -115,10 +115,10 @@
 										);
 									}
 									
-									<!-- 名字刪除按鈕事件 -->
+									// 名字刪除按鈕事件
 									name_delete();
 									
-									<!-- 設定名字修改按鈕 -->
+									// 設定名字修改按鈕
 									name_edit();
 								}
 							},
@@ -126,7 +126,7 @@
 							// 取消新增朋友
 							cancelBtn: {
 								text:"取消",
-								keys: ['esc'],
+								keys: ["esc"],
 								action:	function(){}
 							}
 						},
@@ -139,17 +139,17 @@
 								jc.$$formSubmit.trigger('click'); // reference the button and click it
 							});
 							
-							<!-- 預覽輸入框 -->
+							// 預覽輸入框
 							$("input").focus();
 						}
 					});
 				});
 			}
 			
-			<!-- 名字刪除按鈕事件 -->
+			// 名字刪除按鈕事件
 			function name_delete(){
 				
-				// 僅設定最後新增的那行案件
+				// 僅設定最後新增的那行按鍵
 				$("#name_table tbody tr").last().find(".name_delete_button").click(function(){
 					
 					// 取得必要資訊
@@ -179,7 +179,7 @@
 										}
 									});
 									
-									//刪除朋友並修改後續編號
+									// 刪除朋友並修改後續編號
 									deleted_person.remove();
 									$("#name_table tbody tr").each(function(index){
 										if(index>=deleted_person_index){
@@ -198,8 +198,77 @@
 				});
 			}
 			
-			<!-- 名字修改按鈕事件 -->
+			// 名字修改按鈕事件
 			function name_edit(){
+				
+				// 僅設定最後新增的那行按鍵
+				$("#name_table tbody tr").last().find(".name_edit_button").click(function(){
+					
+					// 取得必要資訊
+					let edited_person=$(this).parent().parent();
+					let name=$(this).parent().parent().find("td").first().text();
+					
+					// 修改朋友名字視窗
+					$.confirm({
+						title:"修改朋友名字：",
+						content:''+
+							'<form action="" class="formName">'+
+								'<div class="form-group">'+
+									'<input type="text" class="name form-control" required />'+
+								'</div>'+
+							'</form>',
+						buttons: {
+							
+							// 彈出修改名字確認框
+							formSubmit: {
+								text:"確定",
+								btnClass:"btn-blue",
+								action: function () {
+									var name = this.$content.find('.name').val();
+									if(!name){
+										$.alert("請輸入名字");
+										return false;
+									}
+									
+									//修改名字
+									edited_person.find("td").first().text(name);
+									$.alert({
+										title: "",
+										content: "已修改朋友名字為："+name,
+										buttons: {
+											okBtn: {
+											text:"OK",
+												keys: ["esc","enter"],
+												action:	function(){}
+											}
+										}
+									});
+								}
+							},
+							
+							// 取消修改名字
+							cancelBtn: {
+								text:"取消",
+								keys: ["esc"],
+								action:	function(){}
+							}
+						},
+						onContentReady: function () {
+						
+							// bind to events
+							var jc = this;
+							this.$content.find('form').on('submit', function (e) {
+								// if the user submits the form by pressing enter in the field.
+								e.preventDefault();
+								jc.$$formSubmit.trigger('click'); // reference the button and click it
+							});
+							
+							// 預覽輸入框
+							$(".jconfirm").find("input").focus();
+							$(".jconfirm").find("input").val(name);
+						}
+					});
+				});
 			}
 		</script>
 		<style type="text/css">
