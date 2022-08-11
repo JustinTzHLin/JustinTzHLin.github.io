@@ -13,7 +13,6 @@
 }
 .new_people_btn{
 	text-align:center;
-	overflow-y:auto;
 }
 
 .split_result{
@@ -48,10 +47,8 @@
 	background-color:rgb(255,255,255);
 	box-shadow:0px 0px 8px 0px rgba(0,0,0,0.5);
 }
-.expenses_title{
-	font-size:30px;
+.new_people_btn{
 	text-align:center;
-	padding:20px;
 }
 
 .split_conditions{
