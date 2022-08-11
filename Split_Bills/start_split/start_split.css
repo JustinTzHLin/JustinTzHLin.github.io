@@ -17,7 +17,6 @@
 
 .split_result{
 	height:50vh;
-	overflow:auto;
 }
 .split_result_interface{
 	height:calc(50vh - 8px);
@@ -27,6 +26,7 @@
 	padding:20px;
 	background-color:rgb(255,255,255);
 	box-shadow:0px 0px 8px 0px rgba(0,0,0,0.5);
+	overflow:auto;
 }
 .split_result_title{
 	font-size:30px;
@@ -36,7 +36,6 @@
 
 .expenses{
 	height:60vh;
-	overflow:auto;
 }
 .expenses_interface{
 	height:calc(60vh - 8px);
@@ -46,6 +45,7 @@
 	padding:20px;
 	background-color:rgb(255,255,255);
 	box-shadow:0px 0px 8px 0px rgba(0,0,0,0.5);
+	overflow:auto;
 }
 .new_people_btn{
 	text-align:center;
@@ -53,7 +53,6 @@
 
 .split_conditions{
 	height:40vh;
-	overflow:auto;
 }
 .split_conditions_interface{
 	height:calc(40vh - 8px);
@@ -63,6 +62,7 @@
 	padding:20px;
 	background-color:rgb(255,255,255);
 	box-shadow:0px 0px 8px 0px rgba(0,0,0,0.5);
+	overflow:auto;
 }
 .split_conditions_title{
 	font-size:30px;
@@ -75,6 +75,9 @@
 }
 .name_edit_button,.name_delete_button{
 	cursor:pointer;
+	margin:-200px;
+	border:transparent;
+	background:transparent;
 }
 .btn{
 	font-weight:bold;

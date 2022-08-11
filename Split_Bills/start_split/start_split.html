@@ -62,12 +62,15 @@
 									if(!name){
 										$.alert({
 											title: "",
+											type: "red",
 											content: "請輸入名字",
 											buttons: {
 												okBtn: {
 												text:"OK",
 													keys: ["esc","enter"],
-													action:	function(){}
+													action:	function(){
+														$(".jconfirm").find("input").focus();
+													}
 												}
 											}
 										});
@@ -76,12 +79,15 @@
 									else if(name.length>10){
 										$.alert({
 											title: "",
+											type: "red",
 											content: "請輸入10字以內",
 											buttons: {
 												okBtn: {
 												text:"OK",
 													keys: ["esc","enter"],
-													action:	function(){}
+													action:	function(){
+														$(".jconfirm").find("input").focus();
+													}
 												}
 											}
 										});
@@ -89,7 +95,9 @@
 									}
 									$.alert({
 										title: "",
+										type: "green",
 										content: "已新增朋友："+name,
+										autoClose: 'okBtn|1',
 										buttons: {
 											okBtn: {
 											text:"OK",
@@ -107,10 +115,10 @@
 												'<th scope="col" style="vertical-align:middle">'+(name_index+1)+'</th>'+
 												'<td scope="col" style="vertical-align:middle">'+name+'</td>'+
 												'<td scope="col" style="text-align:center">'+
-													'<i class="bi bi-pencil-square name_edit_button"></i>'+
+													'<button class="bi bi-pencil-square name_edit_button"></button>'+
 												'</td>'+
 												'<td scope="col" style="text-align:center">'+
-													'<i class="bi bi-x-square name_delete_button"></i>'+
+													'<button class="bi bi-x-square name_delete_button"></button>'+
 												'</td>'+
 											'</tr>'
 										);
@@ -131,10 +139,10 @@
 														'<th scope="col" style="vertical-align:middle">1</th>'+
 														'<td scope="col" style="vertical-align:middle">'+name+'</td>'+
 														'<td scope="col" style="text-align:center">'+
-															'<i class="bi bi-pencil-square name_edit_button"></i>'+
+															'<button class="bi bi-pencil-square name_edit_button"></button>'+
 														'</td>'+
 														'<td scope="col" style="text-align:center">'+
-															'<i class="bi bi-x-square name_delete_button"></i>'+
+															'<button class="bi bi-x-square name_delete_button"></button>'+
 														'</td>'+
 													'</tr>'+
 												'</tbody>'+
@@ -196,7 +204,9 @@
 								action: function(){
 									$.alert({
 										title: "",
+										type: "green",
 										content: '刪除 '+name+' 成功',
+										autoClose: 'okBtn|1',
 										buttons: {
 											okBtn: {
 											text:"OK",
@@ -255,12 +265,15 @@
 									if(!name){
 										$.alert({
 											title: "",
+											type: "red",
 											content: "請輸入名字",
 											buttons: {
 												okBtn: {
 												text:"OK",
 													keys: ["esc","enter"],
-													action:	function(){}
+													action:	function(){
+														$(".jconfirm").find("input").focus();
+													}
 												}
 											}
 										});
@@ -269,12 +282,15 @@
 									else if(name.length>10){
 										$.alert({
 											title: "",
+											type: "red",
 											content: "請輸入10字以內",
 											buttons: {
 												okBtn: {
 												text:"OK",
 													keys: ["esc","enter"],
-													action:	function(){}
+													action:	function(){
+														$(".jconfirm").find("input").focus();
+													}
 												}
 											}
 										});
@@ -285,7 +301,9 @@
 									edited_person.find("td").first().text(name);
 									$.alert({
 										title: "",
+										type: "green",
 										content: "已修改朋友名字為："+name,
+										autoClose: 'okBtn|1',
 										buttons: {
 											okBtn: {
 											text:"OK",
