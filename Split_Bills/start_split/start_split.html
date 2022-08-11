@@ -60,7 +60,8 @@
 										$.alert("請輸入名字");
 										return false;
 									}
-									$.alert({
+									$.alert('Your name is ' + name);
+									/*$.alert({
 										title: "",
 										content: "已新增朋友："+name,
 										buttons: {
@@ -70,7 +71,7 @@
 												action:	function(){}
 											}
 										}
-									});
+									});*/
 									
 									<!-- 判斷是否為第一次添加朋友 -->
 									if($("#name_table").length){
@@ -181,10 +182,9 @@
 						}
 					});
 				});
-				
-				<!-- 名字修改按鈕事件 -->
-				function name_edit(){
-				}
+			}
+			<!-- 名字修改按鈕事件 -->
+			function name_edit(){
 			}
 		</script>
 		<style type="text/css">
