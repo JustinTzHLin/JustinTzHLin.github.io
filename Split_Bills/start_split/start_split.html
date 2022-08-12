@@ -356,21 +356,80 @@
 			// 新增帳目按鈕事件
 			function new_expense(){
 				$(".new_expense_btn").click(function(){
+					
+					// 判斷是否已新增名字
+					if($("#name_table tbody tr").length<=1){
+						$.alert({
+							title: "",
+							type: "red",
+							content: "請至少新增2位朋友",
+							buttons: {
+								okBtn: {
+								text:"OK",
+									keys: ["esc","enter"],
+									action:	function(){
+										//$(".jconfirm").find("input").focus();
+									}
+								}
+							}
+						});
+						return false;
+					}
+					
+					// 獲得名字選項
+					let name_list="";
+					$("#name_table tbody tr").each(function(index){
+						let name_now=$(this).find("td").first().text();
+						name_list+='<option value="'+name_now+'">'+name_now+'</option>';
+					});
+					console.log(name_list);
+					
+					
 					$.confirm({
 						title:"新增帳目：",
 						columnClass: "large",
 						content:''+
 							'<form action="" class="formName">'+
 								'<div class="form-group">'+
-									'<div class="input-group" style="padding:3px;">'+
+								
+									// 帳目概述
+									'<div id="expense_overview" class="input-group mb-3" style="padding:3px;">'+
 										'<input type="text" placeholder="20字以內" style="width:35%;" class="form-control" required/>'+
 										'<button class="btn" type="button" style="padding:0px;border:0px;">'+
-											'<select class="form-select" style="border-radius:0px;" aria-label="Default select example">'+
-												'<option value="group">團體</option>'+
-												'<option value="personal">個人</option>'+
+											'<select id="expense_type_select" class="form-select" style="border-radius:0px;" aria-label="Default select example">'+
+												'<option value="group">個人</option>'+
+												'<option value="personal">團體</option>'+
 											'</select>'+
 										'</button>'+
 										'<input type="number" placeholder="總金額" style="text-align:right;" class="form-control" required/>'+
+										'<span class="input-group-text">TWD</span>'+
+									'</div>'+
+									
+									// 消費者
+									'<label for="" class="form-label" style="font-weight:bold;margin-bottom:-50px;font-size:18px;">消費者：</label>'+
+									'<button class="bi bi-plus-square consumer_add_btn"></button>'+
+									'<div id="consumer_overview" class="input-group mb-3" style="padding:3px;">'+
+										'<input type="text" placeholder="20字以內，選填" style="width:35%;" class="form-control" required/>'+
+										'<button class="btn" type="button" style="padding:0px;border:0px;">'+
+											'<select class="form-select" style="border-radius:0px;" aria-label="Default select example">'+
+												name_list+
+											'</select>'+
+										'</button>'+
+										'<input type="number" placeholder="金額" style="text-align:right;" class="form-control" required/>'+
+										'<span class="input-group-text">TWD</span>'+
+									'</div>'+
+									
+									// 付費者
+									'<label for="" class="form-label" style="font-weight:bold;margin-bottom:-50px;font-size:18px;">付費者：</label>'+
+									'<button class="bi bi-plus-square payer_add_btn"></button>'+
+									'<div id="payer_overview" class="input-group mb-3" style="padding:3px;">'+
+										'<input type="text" placeholder="20字以內，選填" style="width:35%;" class="form-control" required/>'+
+										'<button class="btn" type="button" style="padding:0px;border:0px;">'+
+											'<select class="form-select" style="border-radius:0px;" aria-label="Default select example">'+
+												name_list+
+											'</select>'+
+										'</button>'+
+										'<input type="number" placeholder="金額" style="text-align:right;" class="form-control" required/>'+
 										'<span class="input-group-text">TWD</span>'+
 									'</div>'+
 								'</div>'+
@@ -573,14 +632,14 @@
 								</div>
 							</div>
 						</div>
-						<div class="col-12 split_result">
+						<div class="col-12 split_conditions">
 							<div class="row">
-								<div class="split_result_interface col-12">
+								<div class="split_conditions_interface col-12">
 									<div class="row">
 										
-										<!-- 標題 -->
-										<div class="d-grid col-12">
-											<button class="btn btn-outline-primary split_result_title" name="lost-and-found_title">Split Bills 分帳</button>
+										<!-- 新增分帳條件 -->
+										<div class="d-grid col-6 offset-3">
+											<button class="btn btn-outline-dark new_split_condition_btn" name="new_people_btn">新增分帳條件</button>
 										</div>
 									</div>
 								</div>
@@ -602,19 +661,6 @@
 										<!-- 新增帳目 -->
 										<div class="d-grid col-6 offset-3">
 											<button class="btn btn-outline-dark new_expense_btn" name="new_expense_btn">新增帳目</button>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="col-12 split_conditions">
-							<div class="row">
-								<div class="split_conditions_interface col-12">
-									<div class="row">
-										
-										<!-- 標題 -->
-										<div class="d-grid col-12">
-											<button class="btn btn-outline-primary split_conditions_title" name="lost-and-found_title">Split Bills 分帳</button>
 										</div>
 									</div>
 								</div>
