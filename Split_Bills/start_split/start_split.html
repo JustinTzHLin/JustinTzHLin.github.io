@@ -393,7 +393,7 @@
 								'<div class="form-group">'+
 								
 									// 帳目概述
-									'<div id="expense_overview" class="input-group mb-3" style="padding-left:3px;padding-right:3px;">'+
+									'<div id="expense_overview" class="input-group mb-3" style="padding:3px;">'+
 										'<input type="text" placeholder="20字以內" style="width:35%;" class="form-control" required/>'+
 										'<button class="btn" type="button" style="padding:0px;border:0px;">'+
 											'<select id="expense_type_select" class="form-select" style="border-radius:0px;" aria-label="Default select example">'+
@@ -425,7 +425,7 @@
 									'<div id="payer_overview">'+
 										'<label for="" class="form-label" style="font-weight:bold;margin-bottom:-50px;font-size:18px;">付費者：</label>'+
 										'<button class="bi bi-plus-square payer_add_btn"></button>'+
-										'<div class="input-group" style="padding-left:3px;padding-right:3px;">'+
+										'<div class="input-group mb-1" style="padding-left:3px;padding-right:3px;">'+
 											'<input type="text" placeholder="20字以內，選填" style="width:35%;" class="form-control" required/>'+
 											'<button class="btn" type="button" style="padding:0px;border:0px;">'+
 												'<select class="form-select" style="border-radius:0px;" aria-label="Default select example">'+
@@ -585,7 +585,7 @@
 							//設定新增付費者
 							$(".jconfirm .payer_add_btn").click(function(){
 								let payer_add_html=''+
-									'<div class="input-group mb-0" style="padding-left:3px;padding-right:3px;">'+
+									'<div class="input-group mb-1" style="padding-left:3px;padding-right:3px;">'+
 										'<input type="text" placeholder="20字以內，選填" style="width:35%;" class="form-control" required/>'+
 										'<button class="btn" type="button" style="padding:0px;border:0px;">'+
 											'<select class="form-select" style="border-radius:0px;" aria-label="Default select example">'+
@@ -595,6 +595,8 @@
 										'<input type="number" placeholder="金額" style="text-align:right;" class="form-control" required/>'+
 										'<span class="input-group-text">TWD</span>'+
 									'</div>';
+								$("#payer_overview").find(".input-group").last().removeClass("mb-1");
+								$("#payer_overview").find(".input-group").last().addClass("mb-0");
 								$("#payer_overview").append(payer_add_html);
 							});
 						}
