@@ -393,7 +393,7 @@
 								'<div class="form-group">'+
 								
 									// 帳目概述
-									'<div id="expense_overview" class="input-group mb-3" style="padding:3px;">'+
+									'<div id="expense_overview" class="input-group mb-3" style="padding-left:3px;padding-right:3px;">'+
 										'<input type="text" placeholder="20字以內" style="width:35%;" class="form-control" required/>'+
 										'<button class="btn" type="button" style="padding:0px;border:0px;">'+
 											'<select id="expense_type_select" class="form-select" style="border-radius:0px;" aria-label="Default select example">'+
@@ -406,31 +406,35 @@
 									'</div>'+
 									
 									// 消費者
-									'<label for="" class="form-label" style="font-weight:bold;margin-bottom:-50px;font-size:18px;">消費者：</label>'+
-									'<button class="bi bi-plus-square consumer_add_btn"></button>'+
-									'<div id="consumer_overview" class="input-group mb-3" style="padding:3px;">'+
-										'<input type="text" placeholder="20字以內，選填" style="width:35%;" class="form-control" required/>'+
-										'<button class="btn" type="button" style="padding:0px;border:0px;">'+
-											'<select class="form-select" style="border-radius:0px;" aria-label="Default select example">'+
-												name_list+
-											'</select>'+
-										'</button>'+
-										'<input type="number" placeholder="金額" style="text-align:right;" class="form-control" required/>'+
-										'<span class="input-group-text">TWD</span>'+
+									'<div id="consumer_overview">'+
+										'<label for="" class="form-label" style="font-weight:bold;margin-bottom:-50px;font-size:18px;">消費者：</label>'+
+										'<button class="bi bi-plus-square consumer_add_btn"></button>'+
+										'<div class="input-group mb-3" style="padding-left:3px;padding-right:3px;">'+
+											'<input type="text" placeholder="20字以內，選填" style="width:35%;" class="form-control" required/>'+
+											'<button class="btn" type="button" style="padding:0px;border:0px;">'+
+												'<select class="form-select" style="border-radius:0px;" aria-label="Default select example">'+
+													name_list+
+												'</select>'+
+											'</button>'+
+											'<input type="number" placeholder="金額" style="text-align:right;" class="form-control" required/>'+
+											'<span class="input-group-text">TWD</span>'+
+										'</div>'+
 									'</div>'+
 									
 									// 付費者
-									'<label for="" class="form-label" style="font-weight:bold;margin-bottom:-50px;font-size:18px;">付費者：</label>'+
-									'<button class="bi bi-plus-square payer_add_btn"></button>'+
-									'<div id="payer_overview" class="input-group mb-3" style="padding:3px;">'+
-										'<input type="text" placeholder="20字以內，選填" style="width:35%;" class="form-control" required/>'+
-										'<button class="btn" type="button" style="padding:0px;border:0px;">'+
-											'<select class="form-select" style="border-radius:0px;" aria-label="Default select example">'+
-												name_list+
-											'</select>'+
-										'</button>'+
-										'<input type="number" placeholder="金額" style="text-align:right;" class="form-control" required/>'+
-										'<span class="input-group-text">TWD</span>'+
+									'<div id="payer_overview">'+
+										'<label for="" class="form-label" style="font-weight:bold;margin-bottom:-50px;font-size:18px;">付費者：</label>'+
+										'<button class="bi bi-plus-square payer_add_btn"></button>'+
+										'<div class="input-group" style="padding-left:3px;padding-right:3px;">'+
+											'<input type="text" placeholder="20字以內，選填" style="width:35%;" class="form-control" required/>'+
+											'<button class="btn" type="button" style="padding:0px;border:0px;">'+
+												'<select class="form-select" style="border-radius:0px;" aria-label="Default select example">'+
+													name_list+
+												'</select>'+
+											'</button>'+
+											'<input type="number" placeholder="金額" style="text-align:right;" class="form-control" required/>'+
+											'<span class="input-group-text">TWD</span>'+
+										'</div>'+
 									'</div>'+
 								'</div>'+
 							'</form>',
@@ -534,14 +538,14 @@
 									}
 									
 									// 名字刪除按鈕事件
-									name_delete();
+									//name_delete();
 									
 									// 設定名字修改按鈕
-									name_edit();
+									//name_edit();
 								}
 							},
 							
-							// 取消新增朋友
+							// 取消新增帳目
 							cancelBtn: {
 								text:"取消",
 								keys: ["esc"],
@@ -558,9 +562,41 @@
 							});
 							
 							// 預覽輸入框
-							$(".jconfirm").find("input").focus();
+							$(".jconfirm").find("input").first().focus();
 							
-							//$(".jconfirm").find(".expense").css("oninput","value=value.replace(/[^\d]/g,'')");
+							//設定新增消費者
+							$(".jconfirm .consumer_add_btn").click(function(){
+								let consumer_add_html=''+
+									'<div class="input-group mb-3" style="padding-left:3px;padding-right:3px;">'+
+										'<input type="text" placeholder="20字以內，選填" style="width:35%;" class="form-control" required/>'+
+										'<button class="btn" type="button" style="padding:0px;border:0px;">'+
+											'<select class="form-select" style="border-radius:0px;" aria-label="Default select example">'+
+												name_list+
+											'</select>'+
+										'</button>'+
+										'<input type="number" placeholder="金額" style="text-align:right;" class="form-control" required/>'+
+										'<span class="input-group-text">TWD</span>'+
+									'</div>';
+								$("#consumer_overview").find(".input-group").last().removeClass("mb-3");
+								$("#consumer_overview").find(".input-group").last().addClass("mb-0");
+								$("#consumer_overview").append(consumer_add_html);
+							});
+							
+							//設定新增付費者
+							$(".jconfirm .payer_add_btn").click(function(){
+								let payer_add_html=''+
+									'<div class="input-group mb-0" style="padding-left:3px;padding-right:3px;">'+
+										'<input type="text" placeholder="20字以內，選填" style="width:35%;" class="form-control" required/>'+
+										'<button class="btn" type="button" style="padding:0px;border:0px;">'+
+											'<select class="form-select" style="border-radius:0px;" aria-label="Default select example">'+
+												name_list+
+											'</select>'+
+										'</button>'+
+										'<input type="number" placeholder="金額" style="text-align:right;" class="form-control" required/>'+
+										'<span class="input-group-text">TWD</span>'+
+									'</div>';
+								$("#payer_overview").append(payer_add_html);
+							});
 						}
 					});
 				});

@@ -54,6 +54,7 @@
 }
 .payer_add_btn,.consumer_add_btn{
 	border:transparent;
+	cursor:pointer;
 }
 
 .split_conditions{
