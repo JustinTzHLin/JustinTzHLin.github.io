@@ -65,7 +65,7 @@
 								text:"確定",
 								btnClass:"btn-blue",
 								action: function () {
-									var name = this.$content.find('.name').val();
+									let name = this.$content.find('.name').val();
 									if(!name){
 										$.alert({
 											title: "",
@@ -116,7 +116,7 @@
 									
 									// 判斷是否為第一次添加朋友
 									if($("#name_table").length){
-										var name_index=$(".form_name tbody tr").length;
+										let name_index=$(".form_name tbody tr").length;
 										$(".form_name tbody").append(''+
 											'<tr>'+
 												'<th scope="col" style="vertical-align:middle">'+(name_index+1)+'</th>'+
@@ -274,12 +274,12 @@
 								text:"確定",
 								btnClass:"btn-blue",
 								action: function () {
-									var name = this.$content.find('.name').val();
+									let name = this.$content.find('.name').val();
 									if(!name){
 										$.alert({
 											title: "",
 											type: "red",
-											content: "請輸入名名稱",
+											content: "請輸入名稱",
 											buttons: {
 												okBtn: {
 												text:"OK",
@@ -368,7 +368,7 @@
 								text:"OK",
 									keys: ["esc","enter"],
 									action:	function(){
-										//$(".jconfirm").find("input").focus();
+										$(".new_people_btn").focus();
 									}
 								}
 							}
@@ -382,7 +382,6 @@
 						let name_now=$(this).find("td").first().text();
 						name_list+='<option value="'+name_now+'">'+name_now+'</option>';
 					});
-					console.log(name_list);
 					
 					
 					$.confirm({
@@ -394,14 +393,14 @@
 								
 									// 帳目概述
 									'<div id="expense_overview" class="input-group mb-3" style="padding:3px;">'+
-										'<input type="text" placeholder="20字以內" style="width:35%;" class="form-control" required/>'+
+										'<input type="text" placeholder="20字以內" style="width:35%;" class="form-control expense_description" required/>'+
 										'<button class="btn" type="button" style="padding:0px;border:0px;">'+
-											'<select id="expense_type_select" class="form-select" style="border-radius:0px;" aria-label="Default select example">'+
-												'<option value="group">個人</option>'+
-												'<option value="personal">團體</option>'+
+											'<select id="expense_type_select" class="form-select expense_type_select" style="border-radius:0px;" aria-label="Default select example">'+
+												'<option value="personal">個人</option>'+
+												'<option value="group">團體</option>'+
 											'</select>'+
 										'</button>'+
-										'<input type="number" placeholder="總金額" style="text-align:right;" class="form-control" required/>'+
+										'<input type="number" placeholder="總金額" style="text-align:right;" class="form-control expense_charge" required/>'+
 										'<span class="input-group-text">TWD</span>'+
 									'</div>'+
 									
@@ -410,14 +409,15 @@
 										'<label for="" class="form-label" style="font-weight:bold;margin-bottom:-50px;font-size:18px;">消費者：</label>'+
 										'<button class="bi bi-plus-square consumer_add_btn"></button>'+
 										'<div class="input-group mb-3" style="padding-left:3px;padding-right:3px;">'+
-											'<input type="text" placeholder="20字以內，選填" style="width:35%;" class="form-control" required/>'+
+											'<input type="text" placeholder="20字以內，選填" style="width:35%;" class="form-control consumption_description" required/>'+
 											'<button class="btn" type="button" style="padding:0px;border:0px;">'+
-												'<select class="form-select" style="border-radius:0px;" aria-label="Default select example">'+
+												'<select class="form-select consumption_consumer" style="border-radius:0px;" aria-label="Default select example">'+
 													name_list+
 												'</select>'+
 											'</button>'+
-											'<input type="number" placeholder="金額" style="text-align:right;" class="form-control" required/>'+
+											'<input type="number" placeholder="金額" style="text-align:right;" class="form-control consumption_charge" required/>'+
 											'<span class="input-group-text">TWD</span>'+
+											'<button class="bi bi-x consumer_delete_btn" type="button"></button>'+
 										'</div>'+
 									'</div>'+
 									
@@ -426,54 +426,101 @@
 										'<label for="" class="form-label" style="font-weight:bold;margin-bottom:-50px;font-size:18px;">付費者：</label>'+
 										'<button class="bi bi-plus-square payer_add_btn"></button>'+
 										'<div class="input-group mb-1" style="padding-left:3px;padding-right:3px;">'+
-											'<input type="text" placeholder="20字以內，選填" style="width:35%;" class="form-control" required/>'+
+											'<input type="text" placeholder="20字以內，選填" style="width:35%;" class="form-control pay_description" required/>'+
 											'<button class="btn" type="button" style="padding:0px;border:0px;">'+
-												'<select class="form-select" style="border-radius:0px;" aria-label="Default select example">'+
+												'<select class="form-select pay_payer" style="border-radius:0px;" aria-label="Default select example">'+
 													name_list+
 												'</select>'+
 											'</button>'+
-											'<input type="number" placeholder="金額" style="text-align:right;" class="form-control" required/>'+
+											'<input type="number" placeholder="金額" style="text-align:right;" class="form-control pay_charge" required/>'+
 											'<span class="input-group-text">TWD</span>'+
+											'<button class="bi bi-x payer_delete_btn" type="button"></button>'+
 										'</div>'+
 									'</div>'+
 								'</div>'+
 							'</form>',
 						buttons: {
 							
-							// 彈出新增朋友確認框
+							// 彈出新增帳目確認框
 							formSubmit: {
 								text:"確定",
+								keys: ["enter"],
 								btnClass:"btn-blue",
 								action: function () {
-									var name = this.$content.find('.name').val();
-									if(!name){
+									
+									//取得帳目資訊
+									let expense_description=$(".jconfirm").find(".expense_description").val();
+									let expense_type_select=$(".jconfirm").find(".expense_type_select").val();
+									let expense_charge=$(".jconfirm").find(".expense_charge").val();
+									
+									//取得消費資訊
+									let consumption_description=[];
+									$(".jconfirm").find(".consumption_description").each(function(){
+										consumption_description.push($(this).val());
+									});
+									let consumption_consumer=[];
+									$(".jconfirm").find(".consumption_consumer").each(function(){
+										consumption_consumer.push($(this).val());
+									});
+									let consumption_charge=[];
+									$(".jconfirm").find(".consumption_charge").each(function(){
+										consumption_charge.push($(this).val());
+									});
+									
+									//取得付費資訊
+									let pay_description=[];
+									$(".jconfirm").find(".pay_description").each(function(){
+										pay_description.push($(this).val());
+									});
+									let pay_payer=[];
+									$(".jconfirm").find(".pay_payer").each(function(){
+										pay_payer.push($(this).val());
+									});
+									let pay_charge=[];
+									$(".jconfirm").find(".pay_charge").each(function(){
+										pay_charge.push($(this).val());
+									});
+									
+									//test
+									console.log(expense_description);
+									console.log(expense_type_select);
+									console.log(expense_charge);
+									console.log(consumption_description);
+									console.log(consumption_consumer);
+									console.log(consumption_charge);
+									console.log(pay_description);
+									console.log(pay_payer);
+									console.log(pay_charge);
+									
+									// 檢查各輸入
+									if(!expense_description){
 										$.alert({
 											title: "",
 											type: "red",
-											content: "請輸入名字",
+											content: "請輸入帳目名稱",
 											buttons: {
 												okBtn: {
 												text:"OK",
 													keys: ["esc","enter"],
 													action:	function(){
-														$(".jconfirm").find("input").focus();
+														$(".jconfirm").find(".expense_description").focus();
 													}
 												}
 											}
 										});
 										return false;
 									}
-									else if(name.length>10){
+									else if(expense_description.length>20){
 										$.alert({
-											title: "",
+											title: "帳目名稱",
 											type: "red",
-											content: "請輸入10字以內",
+											content: "請輸入20字以內",
 											buttons: {
 												okBtn: {
 												text:"OK",
 													keys: ["esc","enter"],
 													action:	function(){
-														$(".jconfirm").find("input").focus();
+														$(".jconfirm").find(".expense_description").focus();
 													}
 												}
 											}
@@ -493,55 +540,6 @@
 											}
 										}
 									});
-									
-									// 判斷是否為第一次添加朋友
-									if($("#name_table").length){
-										var name_index=$(".form_name tbody tr").length;
-										$(".form_name tbody").append(''+
-											'<tr>'+
-												'<th scope="col" style="vertical-align:middle">'+(name_index+1)+'</th>'+
-												'<td scope="col" style="vertical-align:middle">'+name+'</td>'+
-												'<td scope="col" style="text-align:center">'+
-													'<button class="bi bi-pencil-square name_edit_button"></button>'+
-												'</td>'+
-												'<td scope="col" style="text-align:center">'+
-													'<button class="bi bi-x-square name_delete_button"></button>'+
-												'</td>'+
-											'</tr>'
-										);
-									}
-									else{
-										$(".form_name").append(''+
-											'<table id="name_table" class="table table-striped table-hover table-bordered table-bg">'+
-												'<thead>'+
-													'<tr>'+
-														'<th scope="col">#</th>'+
-														'<th scope="col">名字</th>'+
-														'<th scope="col" style="text-align:center">修改</th>'+
-														'<th scope="col" style="text-align:center">刪除</th>'+
-													'</tr>'+
-												'</thead>'+
-												'<tbody>'+
-													'<tr>'+
-														'<th scope="col" style="vertical-align:middle">1</th>'+
-														'<td scope="col" style="vertical-align:middle">'+name+'</td>'+
-														'<td scope="col" style="text-align:center">'+
-															'<button class="bi bi-pencil-square name_edit_button"></button>'+
-														'</td>'+
-														'<td scope="col" style="text-align:center">'+
-															'<button class="bi bi-x-square name_delete_button"></button>'+
-														'</td>'+
-													'</tr>'+
-												'</tbody>'+
-											'</table>'
-										);
-									}
-									
-									// 名字刪除按鈕事件
-									//name_delete();
-									
-									// 設定名字修改按鈕
-									//name_edit();
 								}
 							},
 							
@@ -554,12 +552,20 @@
 						},
 						onContentReady: function () {
 							// bind to events
+							/*
 							var jc = this;
 							this.$content.find('form').on('submit', function (e) {
 								// if the user submits the form by pressing enter in the field.
 								e.preventDefault();
 								jc.$$formSubmit.trigger('click'); // reference the button and click it
 							});
+							*/
+									
+							// 消費者刪除按鈕事件
+							consumer_delete();
+							
+							// 付費者刪除按鈕事件
+							payer_delete();
 							
 							// 預覽輸入框
 							$(".jconfirm").find("input").first().focus();
@@ -568,40 +574,185 @@
 							$(".jconfirm .consumer_add_btn").click(function(){
 								let consumer_add_html=''+
 									'<div class="input-group mb-3" style="padding-left:3px;padding-right:3px;">'+
-										'<input type="text" placeholder="20字以內，選填" style="width:35%;" class="form-control" required/>'+
+										'<input type="text" placeholder="20字以內，選填" style="width:35%;" class="form-control consumption_description" required/>'+
 										'<button class="btn" type="button" style="padding:0px;border:0px;">'+
-											'<select class="form-select" style="border-radius:0px;" aria-label="Default select example">'+
+											'<select class="form-select consumption_consumer" style="border-radius:0px;" aria-label="Default select example">'+
 												name_list+
 											'</select>'+
 										'</button>'+
-										'<input type="number" placeholder="金額" style="text-align:right;" class="form-control" required/>'+
+										'<input type="number" placeholder="金額" style="text-align:right;" class="form-control consumption_charge" required/>'+
 										'<span class="input-group-text">TWD</span>'+
+										'<button class="bi bi-x consumer_delete_btn" type="button"></button>'+
 									'</div>';
 								$("#consumer_overview").find(".input-group").last().removeClass("mb-3");
 								$("#consumer_overview").find(".input-group").last().addClass("mb-0");
 								$("#consumer_overview").append(consumer_add_html);
+								
+								// 消費者刪除按鈕事件
+								consumer_delete();
 							});
 							
 							//設定新增付費者
 							$(".jconfirm .payer_add_btn").click(function(){
 								let payer_add_html=''+
 									'<div class="input-group mb-1" style="padding-left:3px;padding-right:3px;">'+
-										'<input type="text" placeholder="20字以內，選填" style="width:35%;" class="form-control" required/>'+
+										'<input type="text" placeholder="20字以內，選填" style="width:35%;" class="form-control pay_description" required/>'+
 										'<button class="btn" type="button" style="padding:0px;border:0px;">'+
-											'<select class="form-select" style="border-radius:0px;" aria-label="Default select example">'+
+											'<select class="form-select pay_payer" style="border-radius:0px;" aria-label="Default select example">'+
 												name_list+
 											'</select>'+
 										'</button>'+
-										'<input type="number" placeholder="金額" style="text-align:right;" class="form-control" required/>'+
+										'<input type="number" placeholder="金額" style="text-align:right;" class="form-control pay_charge" required/>'+
 										'<span class="input-group-text">TWD</span>'+
+										'<button class="bi bi-x payer_delete_btn" type="button"></button>'+
 									'</div>';
 								$("#payer_overview").find(".input-group").last().removeClass("mb-1");
 								$("#payer_overview").find(".input-group").last().addClass("mb-0");
 								$("#payer_overview").append(payer_add_html);
+								
+								// 付費者刪除按鈕事件
+								payer_delete();
 							});
 						}
 					});
 				});
+			}
+			
+			// 消費者刪除按鈕事件
+			function consumer_delete(){
+			
+				// 僅設定最後新增的那行按鍵
+				$(".jconfirm .consumer_delete_btn").last().click(function(){
+					
+					// 檢查是否是唯一消費
+					if($(".jconfirm .consumer_delete_btn").length==1){
+						$.alert({
+							title: "",
+							type: "red",
+							content: "至少保留1筆消費",
+							buttons: {
+								okBtn: {
+								text:"OK",
+									keys: ["esc","enter"],
+									action:	function(){
+										//$(".jconfirm").find("input").focus();
+									}
+								}
+							}
+						});
+						return false;
+					}
+					
+					// 取得必要資訊
+					let deleted_consumer=$(this).parent();
+					
+					// 彈出刪除確認框
+					$.confirm({
+						title: "確定刪除此筆消費？",
+						content: name,
+						buttons: {
+							deleteBtn: {
+								text: "刪除",
+								btnClass: 'btn-red',
+								keys: ['enter','shift'],
+								action: function(){
+									$.alert({
+										title: "",
+										type: "green",
+										content: '刪除消費成功',
+										autoClose: 'okBtn|1',
+										buttons: {
+											okBtn: {
+											text:"OK",
+												keys: ['esc','enter'],
+												action:	function(){}
+											}
+										}
+									});
+									
+									// 刪除消費並修改後續編號
+									deleted_consumer.remove();
+									$("#consumer_overview").find(".input-group").last().removeClass("mb-0");
+									$("#consumer_overview").find(".input-group").last().addClass("mb-3");
+								}
+							},
+							cancelBtn: {
+								text:"取消",
+								keys: ['esc'],
+								action:	function(){}
+							}
+						}
+					});
+				});
+			}
+			
+			// 付費者刪除按鈕事件
+			function payer_delete(){
+				
+				// 僅設定最後新增的那行按鍵
+				$(".jconfirm .payer_delete_btn").last().click(function(){
+					
+					// 檢查是否是唯一消費
+					if($(".jconfirm .payer_delete_btn").length==1){
+						$.alert({
+							title: "",
+							type: "red",
+							content: "至少保留1筆付費",
+							buttons: {
+								okBtn: {
+								text:"OK",
+									keys: ["esc","enter"],
+									action:	function(){
+										//$(".jconfirm").find("input").focus();
+									}
+								}
+							}
+						});
+						return false;
+					}
+					
+					// 取得必要資訊
+					let deleted_payer=$(this).parent();
+					
+					// 彈出刪除確認框
+					$.confirm({
+						title: "確定刪除此筆付費？",
+						content: name,
+						buttons: {
+							deleteBtn: {
+								text: "刪除",
+								btnClass: 'btn-red',
+								keys: ['enter','shift'],
+								action: function(){
+									$.alert({
+										title: "",
+										type: "green",
+										content: '刪除付費成功',
+										autoClose: 'okBtn|1',
+										buttons: {
+											okBtn: {
+											text:"OK",
+												keys: ['esc','enter'],
+												action:	function(){}
+											}
+										}
+									});
+									
+									// 刪除付費並修改排版
+									deleted_payer.remove();
+									$("#payer_overview").find(".input-group").last().removeClass("mb-0");
+									$("#payer_overview").find(".input-group").last().addClass("mb-1");
+								}
+							},
+							cancelBtn: {
+								text:"取消",
+								keys: ['esc'],
+								action:	function(){}
+							}
+						}
+					});
+				});
+			
 			}
 		</script>
 		<style type="text/css">

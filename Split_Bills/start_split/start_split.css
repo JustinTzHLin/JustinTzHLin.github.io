@@ -54,7 +54,15 @@
 }
 .payer_add_btn,.consumer_add_btn{
 	border:transparent;
+	background-color:transparent;
 	cursor:pointer;
+}
+.payer_delete_btn,.consumer_delete_btn{
+	border:1px solid #ced4da;
+    background-color:transparent;
+    border-radius:0.25rem;
+    border-top-left-radius:0px;
+    border-bottom-left-radius:0px;
 }
 
 .split_conditions{
