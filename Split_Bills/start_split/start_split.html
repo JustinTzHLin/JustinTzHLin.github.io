@@ -492,6 +492,21 @@
 									console.log(pay_payer);
 									console.log(pay_charge);
 									
+									// 測試檢查
+									let warning_text="";
+									if(!expense_description){
+										warning_text+="請輸入帳目名稱";
+									}
+									else if(expense_description.length>=20){
+										warning_text+="帳目名稱 請輸入20字以內";
+									}
+									if(!expense_charge){
+										warning_text+="\n帳目金額 請勿留白";
+									}
+									for(var i=0;i<consumption_description.length;i++){
+										
+									}
+									
 									// 檢查各輸入
 									if(!expense_description){
 										$.alert({
