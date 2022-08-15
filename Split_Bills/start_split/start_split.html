@@ -25,7 +25,7 @@
 		<!-- 引入bootstrap -->
 		<link rel=stylesheet type="text/css" href="../library/bootstrap_library/css/bootstrap.css">
 		<script type="text/javascript" src="../library/bootstrap_library/js/bootstrap.js"></script>
-		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+		<link rel="stylesheet" href="../library/bootstrap_library/icons-1.9.1/font/bootstrap-icons.css">
 		<!--<script type="text/javascript" src="../library/bootstrap_library/js/bootstrap.bundle.js"></script>-->
 		
 		<!-- 引入jquery-confirm -->
@@ -310,7 +310,7 @@
 										return false;
 									}
 									
-									//修改名字
+									// 修改名字
 									edited_person.find("td").first().text(name);
 									$.alert({
 										title: "",
@@ -448,12 +448,12 @@
 								btnClass:"btn-blue",
 								action: function () {
 									
-									//取得帳目資訊
+									// 取得帳目資訊
 									let expense_description=$(".jconfirm").find(".expense_description").val();
 									let expense_type_select=$(".jconfirm").find(".expense_type_select").val();
 									let expense_charge=$(".jconfirm").find(".expense_charge").val();
 									
-									//取得消費資訊
+									// 取得消費資訊
 									let consumption_description=[];
 									$(".jconfirm").find(".consumption_description").each(function(){
 										consumption_description.push($(this).val());
@@ -467,7 +467,7 @@
 										consumption_charge.push($(this).val());
 									});
 									
-									//取得付費資訊
+									// 取得付費資訊
 									let pay_description=[];
 									$(".jconfirm").find(".pay_description").each(function(){
 										pay_description.push($(this).val());
@@ -481,6 +481,19 @@
 										pay_charge.push($(this).val());
 									});
 									
+									// 建立帳目物件
+									var expense_detail={
+										expense_description: expense_description,
+										expense_type_select: expense_type_select,
+										expense_charge: expense_charge,
+										consumption_description: consumption_description,
+										consumption_consumer: consumption_consumer,
+										consumption_charge: consumption_charge,
+										pay_description: pay_description,
+										pay_payer: pay_payer,
+										pay_charge: pay_charge
+									}
+									
 									//test
 									console.log(expense_description);
 									console.log(expense_type_select);
@@ -492,66 +505,73 @@
 									console.log(pay_payer);
 									console.log(pay_charge);
 									
-									// 測試檢查
+									// 檢查各輸入
 									let warning_text="";
 									if(!expense_description){
-										warning_text+="請輸入帳目名稱";
+										warning_text+="<b>帳目名稱</b> 請勿留白</div><div>";
 									}
 									else if(expense_description.length>=20){
-										warning_text+="帳目名稱 請輸入20字以內";
+										warning_text+="<b>帳目名稱</b> 請輸入20字以內</div><div>";
 									}
 									if(!expense_charge){
-										warning_text+="\n帳目金額 請勿留白";
+										warning_text+="<b>帳目金額</b> 請勿留白</div><div>";
 									}
 									for(var i=0;i<consumption_description.length;i++){
-										
+										if(consumption_description[i].length>20){
+											warning_text+="<b>消費敘述</b> 請輸入20字以內</div><div>";
+											break;
+										}
 									}
-									
-									// 檢查各輸入
-									if(!expense_description){
+									for(var i=0;i<consumption_charge.length;i++){
+										if(!consumption_charge[i]){
+											warning_text+="<b>消費金額</b> 請勿留白</div><div>";
+											break;
+										}
+									}
+									for(var i=0;i<pay_description.length;i++){
+										if(pay_description[i].length>20){
+											warning_text+="<b>付費敘述</b> 請輸入20字以內</div><div>";
+											break;
+										}
+									}
+									for(var i=0;i<pay_charge.length;i++){
+										if(!pay_charge[i]){
+											warning_text+="<b>付費金額</b> 請勿留白</div><div>";
+											break;
+										}
+									}
+									if(warning_text.length>0){
 										$.alert({
 											title: "",
 											type: "red",
-											content: "請輸入帳目名稱",
+											content: warning_text,
 											buttons: {
 												okBtn: {
 												text:"OK",
 													keys: ["esc","enter"],
 													action:	function(){
-														$(".jconfirm").find(".expense_description").focus();
 													}
 												}
 											}
 										});
 										return false;
 									}
-									else if(expense_description.length>20){
-										$.alert({
-											title: "帳目名稱",
-											type: "red",
-											content: "請輸入20字以內",
-											buttons: {
-												okBtn: {
-												text:"OK",
-													keys: ["esc","enter"],
-													action:	function(){
-														$(".jconfirm").find(".expense_description").focus();
-													}
-												}
-											}
-										});
-										return false;
-									}
+									
+									// 若輸入皆合法
 									$.alert({
 										title: "",
 										type: "green",
-										content: "已新增朋友："+name,
+										content: "新增帳目成功",
 										autoClose: 'okBtn|1',
 										buttons: {
 											okBtn: {
 											text:"OK",
 												keys: ["esc","enter"],
-												action:	function(){}
+												action:	function(){
+												
+													// 建立帳目Table
+													expense_add(expense_detail);
+												}
 											}
 										}
 									});
@@ -607,7 +627,7 @@
 								consumer_delete();
 							});
 							
-							//設定新增付費者
+							// 設定新增付費者
 							$(".jconfirm .payer_add_btn").click(function(){
 								let payer_add_html=''+
 									'<div class="input-group mb-1" style="padding-left:3px;padding-right:3px;">'+
@@ -768,6 +788,13 @@
 					});
 				});
 			
+			}
+			
+			// 建立帳目Table
+			function expense_add(expense_detail){
+				console.log(expense_detail);
+				
+				
 			}
 		</script>
 		<style type="text/css">
