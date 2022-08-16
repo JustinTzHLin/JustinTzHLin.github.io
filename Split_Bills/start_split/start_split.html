@@ -810,7 +810,6 @@
 				let expense_type_select="";
 				if(expense_detail.expense_type_select=="personal"){expense_type_select="一般消費";}
 				else if(expense_detail.expense_type_select=="group"){expense_type_select="均分消費";}
-				//let expense_type_select=expense_detail.expense_type_select;
 				let expense_charge=expense_detail.expense_charge;
 				let consumption_description=expense_detail.consumption_description;
 				let consumption_consumer=expense_detail.consumption_consumer;
@@ -883,8 +882,6 @@
 				else{
 					$(".form_expense").append(''+
 						'<table id="expense_table" class="table table-hover table-bordered table-bg">'+
-							'<thead>'+
-							'</thead>'+
 							'<tbody>'+
 								'<tr class="expense_table_main">'+
 									'<th scope="col" style="vertical-align:middle">1</th>'+
@@ -905,6 +902,63 @@
 					);
 				}
 				$(".expense_table_main").children().css("--bs-table-accent-bg","var(--bs-table-striped-bg)");
+				
+				// 帳目刪除按鈕事件
+				expense_delete();
+			}
+			
+			// 帳目刪除按鈕事件
+			function expense_delete(){
+				
+				// 僅設定最後新增的那行按鍵
+				$("#expense_table tbody").last().find(".expense_delete_button").click(function(){
+					
+					// 取得必要資訊
+					let deleted_expense=$(this).parent().parent().parent();
+					let deleted_expense_index=$(this).parent().parent().parent().index();
+					let expense_description=$(this).parent().parent().find("td").first().text();
+					
+					// 彈出刪除確認框
+					$.confirm({
+						title: "確定刪除此筆帳目？",
+						content: expense_description,
+						buttons: {
+							deleteBtn: {
+								text: "刪除",
+								btnClass: 'btn-red',
+								keys: ['enter','shift'],
+								action: function(){
+									$.alert({
+										title: "刪除帳目成功",
+										type: "green",
+										content: expense_description,
+										autoClose: 'okBtn|1',
+										buttons: {
+											okBtn: {
+											text:"OK",
+												keys: ['esc','enter'],
+												action:	function(){}
+											}
+										}
+									});
+									
+									// 刪除帳目並修改後續編號
+									deleted_expense.remove();
+									$("#expense_table tbody").each(function(index){
+										if(index>=deleted_expense_index){
+											$(this).find("th").first().text(index+1);
+										}
+									});
+								}
+							},
+							cancelBtn: {
+								text:"取消",
+								keys: ['esc'],
+								action:	function(){}
+							}
+						}
+					});
+				});
 			}
 		</script>
 		<style type="text/css">
