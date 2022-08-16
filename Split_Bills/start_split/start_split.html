@@ -601,7 +601,7 @@
 							// 預覽輸入框
 							$(".jconfirm").find("input").first().focus();
 							
-							//設定新增消費者
+							// 設定新增消費者
 							$(".jconfirm .consumer_add_btn").click(function(){
 								let consumer_add_html=''+
 									'<div class="input-group mb-3" style="padding-left:3px;padding-right:3px;">'+
@@ -807,7 +807,10 @@
 				
 				// 取得帳目資訊
 				let expense_description=expense_detail.expense_description;
-				let expense_type_select=expense_detail.expense_type_select;
+				let expense_type_select="";
+				if(expense_detail.expense_type_select=="personal"){expense_type_select="一般消費";}
+				else if(expense_detail.expense_type_select=="group"){expense_type_select="均分消費";}
+				//let expense_type_select=expense_detail.expense_type_select;
 				let expense_charge=expense_detail.expense_charge;
 				let consumption_description=expense_detail.consumption_description;
 				let consumption_consumer=expense_detail.consumption_consumer;
@@ -827,45 +830,76 @@
 				console.log(pay_payer);
 				console.log(pay_charge);
 				
+				// 設定新增帳目之消費html
+				let expense_consumption_add_html="";
+				if(expense_type_select=="一般消費"){
+					for(var i=0;i<consumption_consumer.length;i++){
+						expense_consumption_add_html+='<tr>';
+							expense_consumption_add_html+='<th scope="col" style="vertical-align:middle">';
+							if(i==0){expense_consumption_add_html+='消費';}
+							expense_consumption_add_html+='</th>';
+								expense_consumption_add_html+='<td scope="col" style="vertical-align:middle">'+consumption_consumer[i]+'</td>';
+								expense_consumption_add_html+='<td scope="col" style="vertical-align:middle;text-align:right;">'+consumption_charge[i]+' 元</td>';
+								expense_consumption_add_html+='<td scope="col" colspan="3" style="vertical-align:middle;text-align:right;">'+consumption_description[i]+'</td>';
+						expense_consumption_add_html+='</tr>';
+					}
+				}
+				
+				// 設定新增帳目之付費html
+				let expense_pay_add_html="";
+				for(var i=0;i<pay_payer.length;i++){
+					expense_pay_add_html+='<tr>';
+						expense_pay_add_html+='<th scope="col" style="vertical-align:middle">';
+						if(i==0){expense_pay_add_html+='付費';}
+						expense_pay_add_html+='</th>';
+							expense_pay_add_html+='<td scope="col" style="vertical-align:middle">'+pay_payer[i]+'</td>';
+							expense_pay_add_html+='<td scope="col" style="vertical-align:middle;text-align:right;">'+pay_charge[i]+' 元</td>';
+							expense_pay_add_html+='<td scope="col" colspan="3" style="vertical-align:middle;text-align:right;">'+pay_description[i]+'</td>';
+					expense_pay_add_html+='</tr>';
+				}
 				
 				// 判斷是否為第一次添加帳目
 				if($("#expense_table").length){
-					let name_index=$(".form_expense tbody tr").length;
-					$(".form_expense tbody").append(''+
-						'<tr>'+
-							'<th scope="col" style="vertical-align:middle">'+(name_index+1)+'</th>'+
-							'<td scope="col" style="vertical-align:middle">'+expense_description+'</td>'+
-							'<td scope="col" style="text-align:center">'+
-								'<button class="bi bi-pencil-square name_edit_button"></button>'+
-							'</td>'+
-							'<td scope="col" style="text-align:center">'+
-								'<button class="bi bi-x-square name_delete_button"></button>'+
-							'</td>'+
-						'</tr>'
+					let name_index=$(".form_expense tbody .expense_delete_button").length;
+					$(".form_expense table").append(''+
+						'<tbody>'+
+							'<tr class="table-secondary">'+
+								'<th scope="col" style="vertical-align:middle">'+(name_index+1)+'</th>'+
+								'<td scope="col" style="vertical-align:middle;text-align:">'+expense_description+'</td>'+
+								'<td scope="col" style="vertical-align:middle;text-align:right;">'+expense_charge+' 元</td>'+
+								'<td scope="col" style="vertical-align:middle;text-align:center;">'+expense_type_select+'</td>'+
+								'<td scope="col" style="text-align:center">'+
+									'<button class="bi bi-pencil-square name_edit_button"></button>'+
+								'</td>'+
+								'<td scope="col" style="text-align:center">'+
+									'<button class="bi bi-x-square name_delete_button"></button>'+
+								'</td>'+
+							'</tr>'+
+							expense_consumption_add_html+
+							expense_pay_add_html+
+						'</tbody>'
 					);
 				}
 				else{
 					$(".form_expense").append(''+
-						'<table id="expense_table" class="table table-striped table-hover table-bordered table-bg">'+
+						'<table id="expense_table" class="table table-hover table-bordered table-bg">'+
 							'<thead>'+
-								'<tr>'+
-									'<th scope="col">#</th>'+
-									'<th scope="col">名字</th>'+
-									'<th scope="col" style="text-align:center">修改</th>'+
-									'<th scope="col" style="text-align:center">刪除</th>'+
-								'</tr>'+
 							'</thead>'+
 							'<tbody>'+
-								'<tr>'+
+								'<tr class="table-secondary">'+
 									'<th scope="col" style="vertical-align:middle">1</th>'+
-									'<td scope="col" style="vertical-align:middle">'+'</td>'+
+									'<td scope="col" style="vertical-align:middle;text-align:">'+expense_description+'</td>'+
+									'<td scope="col" style="vertical-align:middle;text-align:right;">'+expense_charge+' 元</td>'+
+									'<td scope="col" style="vertical-align:middle;text-align:center;">'+expense_type_select+'</td>'+
 									'<td scope="col" style="text-align:center">'+
 										'<button class="bi bi-pencil-square expense_edit_button"></button>'+
 									'</td>'+
 									'<td scope="col" style="text-align:center">'+
-										'<button class="bi bi-x-square name_delete_button"></button>'+
+										'<button class="bi bi-x-square expense_delete_button"></button>'+
 									'</td>'+
 								'</tr>'+
+								expense_consumption_add_html+
+								expense_pay_add_html+
 							'</tbody>'+
 						'</table>'
 					);
