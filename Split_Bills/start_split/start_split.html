@@ -388,12 +388,6 @@
 									// 帳目概述
 									'<div id="expense_overview" class="input-group mb-3" style="padding:3px;">'+
 										'<input type="text" placeholder="20字以內" style="width:35%;" class="form-control expense_description" required/>'+
-										/*'<button class="btn" type="button" style="padding:0px;border:0px;">'+
-											'<select id="expense_type_select" class="form-select expense_type_select" style="border-radius:0px;" aria-label="Default select example">'+
-												'<option value="personal">個人</option>'+
-												'<option value="group">團體</option>'+
-											'</select>'+
-										'</button>'+*/
 										'<input type="number" placeholder="總金額" style="text-align:right;" class="form-control expense_charge" required/>'+
 										'<span class="input-group-text">TWD</span>'+
 									'</div>'+
@@ -448,22 +442,27 @@
 									
 									// 取得帳目資訊
 									let expense_description=$(".jconfirm").find(".expense_description").val();
-									let expense_type_select=$(".jconfirm").find(".expense_type_select").val();
+									let expense_type_select="personal";
+									if($(".jconfirm .expense_type_select").prop("checked")){
+										expense_type_select="group";
+									}
 									let expense_charge=$(".jconfirm").find(".expense_charge").val();
 									
 									// 取得消費資訊
 									let consumption_description=[];
-									$(".jconfirm").find(".consumption_description").each(function(){
-										consumption_description.push($(this).val());
-									});
 									let consumption_consumer=[];
-									$(".jconfirm").find(".consumption_consumer").each(function(){
-										consumption_consumer.push($(this).val());
-									});
 									let consumption_charge=[];
-									$(".jconfirm").find(".consumption_charge").each(function(){
-										consumption_charge.push($(this).val());
-									});
+									if(expense_type_select=="personal"){
+										$(".jconfirm").find(".consumption_description").each(function(){
+											consumption_description.push($(this).val());
+										});
+										$(".jconfirm").find(".consumption_consumer").each(function(){
+											consumption_consumer.push($(this).val());
+										});
+										$(".jconfirm").find(".consumption_charge").each(function(){
+											consumption_charge.push($(this).val());
+										});
+									}
 									
 									// 取得付費資訊
 									let pay_description=[];
@@ -503,16 +502,25 @@
 									if(!expense_charge){
 										warning_text+="<b>帳目金額</b> 請勿留白</div><div>";
 									}
-									for(var i=0;i<consumption_description.length;i++){
-										if(consumption_description[i].length>20){
-											warning_text+="<b>消費敘述</b> 請輸入20字以內</div><div>";
-											break;
+									if(expense_type_select=="personal"){
+										for(var i=0;i<consumption_description.length;i++){
+											if(consumption_description[i].length>20){
+												warning_text+="<b>消費敘述</b> 請輸入20字以內</div><div>";
+												break;
+											}
 										}
-									}
-									for(var i=0;i<consumption_charge.length;i++){
-										if(!consumption_charge[i]){
-											warning_text+="<b>消費金額</b> 請勿留白</div><div>";
-											break;
+										var consumption_sum=0;
+										for(var i=0;i<consumption_charge.length;i++){
+											if(!consumption_charge[i]){
+												warning_text+="<b>消費金額</b> 請勿留白</div><div>";
+												break;
+											}
+											consumption_sum+=Number(consumption_charge[i]);
+										}
+										if(i==consumption_charge.length){
+											if(consumption_sum!=expense_charge){
+												warning_text+="<b>消費總和</b>需等於<b>帳目金額</b></div><div>";
+											}
 										}
 									}
 									for(var i=0;i<pay_description.length;i++){
@@ -521,10 +529,17 @@
 											break;
 										}
 									}
+									var pay_sum=0;
 									for(var i=0;i<pay_charge.length;i++){
 										if(!pay_charge[i]){
 											warning_text+="<b>付費金額</b> 請勿留白</div><div>";
 											break;
+										}
+										pay_sum+=Number(pay_charge[i]);
+									}
+									if(i==pay_charge.length){
+										if(pay_sum!=expense_charge){
+											warning_text+="<b>付費總和</b>需等於<b>帳目金額</b></div><div>";
 										}
 									}
 									if(warning_text.length>0){
@@ -573,15 +588,6 @@
 							}
 						},
 						onContentReady: function () {
-							// bind to events
-							/*
-							var jc = this;
-							this.$content.find('form').on('submit', function (e) {
-								// if the user submits the form by pressing enter in the field.
-								e.preventDefault();
-								jc.$$formSubmit.trigger('click'); // reference the button and click it
-							});
-							*/
 							
 							// 帳目類別改變事件
 							expense_type_change();
@@ -656,15 +662,6 @@
 						$(".jconfirm .consumer_add_btn").css("visibility","visible");
 					}
 				});
-				
-				/*$(".jconfirm .expense_type_select").change(function(){
-					if($(".jconfirm .expense_type_select").val()=="group"){
-						$(".jconfirm #consumer_overview").hide();
-					}
-					else if($(".expense_type_select").val()=="personal"){
-						$(".jconfirm #consumer_overview").show();
-					}
-				});*/
 			}
 			
 			// 消費者刪除按鈕事件
