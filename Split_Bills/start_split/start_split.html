@@ -863,7 +863,7 @@
 					let name_index=$(".form_expense tbody .expense_delete_button").length;
 					$(".form_expense table").append(''+
 						'<tbody>'+
-							'<tr class="table-secondary">'+
+							'<tr class="expense_table_main">'+
 								'<th scope="col" style="vertical-align:middle">'+(name_index+1)+'</th>'+
 								'<td scope="col" style="vertical-align:middle;text-align:">'+expense_description+'</td>'+
 								'<td scope="col" style="vertical-align:middle;text-align:right;">'+expense_charge+' 元</td>'+
@@ -886,7 +886,7 @@
 							'<thead>'+
 							'</thead>'+
 							'<tbody>'+
-								'<tr class="table-secondary">'+
+								'<tr class="expense_table_main">'+
 									'<th scope="col" style="vertical-align:middle">1</th>'+
 									'<td scope="col" style="vertical-align:middle;text-align:">'+expense_description+'</td>'+
 									'<td scope="col" style="vertical-align:middle;text-align:right;">'+expense_charge+' 元</td>'+
@@ -904,6 +904,7 @@
 						'</table>'
 					);
 				}
+				$(".expense_table_main").children().css("--bs-table-accent-bg","var(--bs-table-striped-bg)");
 			}
 		</script>
 		<style type="text/css">

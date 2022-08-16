@@ -43,6 +43,7 @@
     border-top-left-radius:0px;
     border-bottom-left-radius:0px;
 }
+
 .expense_edit_button,.expense_delete_button{
 	cursor:pointer;
 	margin:-200px;
