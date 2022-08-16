@@ -16,17 +16,11 @@
 		<script type="text/javascript" src="../library/jquery_library/jquery-ui-1.13.0.custom/jquery-ui.js"></script>
 		<link rel=stylesheet type="text/css" href="../library/jquery_library/jquery-ui-1.13.0.custom/jquery-ui.css">
 		
-		<!-- 引入Popper相關 -->
-		<!--
-		<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
-		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
-		-->
-		
 		<!-- 引入bootstrap -->
+		<!--<script src="https://unpkg.com/@popperjs/core@2"></script>-->
 		<link rel=stylesheet type="text/css" href="../library/bootstrap_library/css/bootstrap.css">
 		<script type="text/javascript" src="../library/bootstrap_library/js/bootstrap.js"></script>
 		<link rel="stylesheet" href="../library/bootstrap_library/icons-1.9.1/font/bootstrap-icons.css">
-		<!--<script type="text/javascript" src="../library/bootstrap_library/js/bootstrap.bundle.js"></script>-->
 		
 		<!-- 引入jquery-confirm -->
 		<link rel=stylesheet type="text/css" href="../library/jquery_library/jquery-confirm-v3.3.4/dist/jquery-confirm.min.css">
@@ -494,17 +488,6 @@
 										pay_charge: pay_charge
 									}
 									
-									//test
-									console.log(expense_description);
-									console.log(expense_type_select);
-									console.log(expense_charge);
-									console.log(consumption_description);
-									console.log(consumption_consumer);
-									console.log(consumption_charge);
-									console.log(pay_description);
-									console.log(pay_payer);
-									console.log(pay_charge);
-									
 									// 檢查各輸入
 									let warning_text="";
 									if(!expense_description){
@@ -794,7 +777,71 @@
 			function expense_add(expense_detail){
 				console.log(expense_detail);
 				
+				// 取得帳目資訊
+				let expense_description=expense_detail.expense_description;
+				let expense_type_select=expense_detail.expense_type_select;
+				let expense_charge=expense_detail.expense_charge;
+				let consumption_description=expense_detail.consumption_description;
+				let consumption_consumer=expense_detail.consumption_consumer;
+				let consumption_charge=expense_detail.consumption_charge;
+				let pay_description=expense_detail.pay_description;
+				let pay_payer=expense_detail.pay_payer;
+				let pay_charge=expense_detail.pay_charge;
 				
+				//test
+				console.log(expense_description);
+				console.log(expense_type_select);
+				console.log(expense_charge);
+				console.log(consumption_description);
+				console.log(consumption_consumer);
+				console.log(consumption_charge);
+				console.log(pay_description);
+				console.log(pay_payer);
+				console.log(pay_charge);
+				
+				
+				// 判斷是否為第一次添加帳目
+				if($("#expense_table").length){
+					let name_index=$(".form_expense tbody tr").length;
+					$(".form_expense tbody").append(''+
+						'<tr>'+
+							'<th scope="col" style="vertical-align:middle">'+(name_index+1)+'</th>'+
+							'<td scope="col" style="vertical-align:middle">'+'</td>'+
+							'<td scope="col" style="text-align:center">'+
+								'<button class="bi bi-pencil-square name_edit_button"></button>'+
+							'</td>'+
+							'<td scope="col" style="text-align:center">'+
+								'<button class="bi bi-x-square name_delete_button"></button>'+
+							'</td>'+
+						'</tr>'
+					);
+				}
+				else{
+					$(".form_expense").append(''+
+						'<table id="expense_table" class="table table-striped table-hover table-bordered table-bg">'+
+							'<thead>'+
+								'<tr>'+
+									'<th scope="col">#</th>'+
+									'<th scope="col">名字</th>'+
+									'<th scope="col" style="text-align:center">修改</th>'+
+									'<th scope="col" style="text-align:center">刪除</th>'+
+								'</tr>'+
+							'</thead>'+
+							'<tbody>'+
+								'<tr>'+
+									'<th scope="col" style="vertical-align:middle">1</th>'+
+									'<td scope="col" style="vertical-align:middle">'+'</td>'+
+									'<td scope="col" style="text-align:center">'+
+										'<button class="bi bi-pencil-square expense_edit_button"></button>'+
+									'</td>'+
+									'<td scope="col" style="text-align:center">'+
+										'<button class="bi bi-x-square name_delete_button"></button>'+
+									'</td>'+
+								'</tr>'+
+							'</tbody>'+
+						'</table>'
+					);
+				}
 			}
 		</script>
 		<style type="text/css">
@@ -844,7 +891,7 @@
 	<body>
 		<div class="container">
 			<div class="row">
-				<div class="col-12 col-md-5">
+				<div class="col-12 col-md-4">
 					<div class="row">
 						<div class="col-12 number_of_people">
 							<div class="row">
@@ -878,7 +925,7 @@
 						</div>
 					</div>	
 				</div>
-				<div class="col-12 col-md-7">
+				<div class="col-12 col-md-8">
 					<div class="row">
 						<div class="col-12 expenses">
 							<div class="row">
