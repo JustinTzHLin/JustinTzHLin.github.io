@@ -388,20 +388,24 @@
 									// 帳目概述
 									'<div id="expense_overview" class="input-group mb-3" style="padding:3px;">'+
 										'<input type="text" placeholder="20字以內" style="width:35%;" class="form-control expense_description" required/>'+
-										'<button class="btn" type="button" style="padding:0px;border:0px;">'+
+										/*'<button class="btn" type="button" style="padding:0px;border:0px;">'+
 											'<select id="expense_type_select" class="form-select expense_type_select" style="border-radius:0px;" aria-label="Default select example">'+
 												'<option value="personal">個人</option>'+
 												'<option value="group">團體</option>'+
 											'</select>'+
-										'</button>'+
+										'</button>'+*/
 										'<input type="number" placeholder="總金額" style="text-align:right;" class="form-control expense_charge" required/>'+
 										'<span class="input-group-text">TWD</span>'+
 									'</div>'+
 									
 									// 消費者
-									'<div id="consumer_overview">'+
+									'<div id="consumer_overview" style="margin-bottom:10px;">'+
 										'<label for="" class="form-label" style="font-weight:bold;margin-bottom:-50px;font-size:18px;">消費者：</label>'+
 										'<button class="bi bi-plus-square consumer_add_btn"></button>'+
+										'<div class="form-check form-switch" style="display:flex;float:right;padding-right:5px;">'+
+											'<input class="form-check-input expense_type_select" type="checkbox" id="expense_type_select">'+
+											'<label class="form-check-label" for="expense_type_select"><b>均分消費</b></label>'+
+										'</div>'+
 										'<div class="input-group mb-3" style="padding-left:3px;padding-right:3px;">'+
 											'<input type="text" placeholder="20字以內，選填" style="width:35%;" class="form-control consumption_description" required/>'+
 											'<button class="btn" type="button" style="padding:0px;border:0px;">'+
@@ -578,7 +582,10 @@
 								jc.$$formSubmit.trigger('click'); // reference the button and click it
 							});
 							*/
-									
+							
+							// 帳目類別改變事件
+							expense_type_change();
+							
 							// 消費者刪除按鈕事件
 							consumer_delete();
 							
@@ -602,9 +609,9 @@
 										'<span class="input-group-text">TWD</span>'+
 										'<button class="bi bi-x consumer_delete_btn" type="button"></button>'+
 									'</div>';
-								$("#consumer_overview").find(".input-group").last().removeClass("mb-3");
-								$("#consumer_overview").find(".input-group").last().addClass("mb-0");
-								$("#consumer_overview").append(consumer_add_html);
+								$(".jconfirm #consumer_overview").find(".input-group").last().removeClass("mb-3");
+								$(".jconfirm #consumer_overview").find(".input-group").last().addClass("mb-0");
+								$(".jconfirm #consumer_overview").append(consumer_add_html);
 								
 								// 消費者刪除按鈕事件
 								consumer_delete();
@@ -624,9 +631,9 @@
 										'<span class="input-group-text">TWD</span>'+
 										'<button class="bi bi-x payer_delete_btn" type="button"></button>'+
 									'</div>';
-								$("#payer_overview").find(".input-group").last().removeClass("mb-1");
-								$("#payer_overview").find(".input-group").last().addClass("mb-0");
-								$("#payer_overview").append(payer_add_html);
+								$(".jconfirm #payer_overview").find(".input-group").last().removeClass("mb-1");
+								$(".jconfirm #payer_overview").find(".input-group").last().addClass("mb-0");
+								$(".jconfirm #payer_overview").append(payer_add_html);
 								
 								// 付費者刪除按鈕事件
 								payer_delete();
@@ -634,6 +641,30 @@
 						}
 					});
 				});
+			}
+			
+			// 帳目類別改變事件
+			function expense_type_change(){
+				
+				$(".jconfirm .expense_type_select").change(function(){
+					if($(this).prop("checked")){
+						$(".jconfirm #consumer_overview .input-group").hide();
+						$(".jconfirm .consumer_add_btn").css("visibility","hidden");
+					}
+					else{
+						$(".jconfirm #consumer_overview .input-group").show();
+						$(".jconfirm .consumer_add_btn").css("visibility","visible");
+					}
+				});
+				
+				/*$(".jconfirm .expense_type_select").change(function(){
+					if($(".jconfirm .expense_type_select").val()=="group"){
+						$(".jconfirm #consumer_overview").hide();
+					}
+					else if($(".expense_type_select").val()=="personal"){
+						$(".jconfirm #consumer_overview").show();
+					}
+				});*/
 			}
 			
 			// 消費者刪除按鈕事件
@@ -806,7 +837,7 @@
 					$(".form_expense tbody").append(''+
 						'<tr>'+
 							'<th scope="col" style="vertical-align:middle">'+(name_index+1)+'</th>'+
-							'<td scope="col" style="vertical-align:middle">'+'</td>'+
+							'<td scope="col" style="vertical-align:middle">'+expense_description+'</td>'+
 							'<td scope="col" style="text-align:center">'+
 								'<button class="bi bi-pencil-square name_edit_button"></button>'+
 							'</td>'+
