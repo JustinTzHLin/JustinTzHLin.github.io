@@ -377,7 +377,6 @@
 						name_list+='<option value="'+name_now+'">'+name_now+'</option>';
 					});
 					
-					
 					$.confirm({
 						title:"新增帳目：",
 						columnClass: "large",
@@ -868,10 +867,10 @@
 								'<td scope="col" style="vertical-align:middle;text-align:right;">'+expense_charge+' 元</td>'+
 								'<td scope="col" style="vertical-align:middle;text-align:center;">'+expense_type_select+'</td>'+
 								'<td scope="col" style="text-align:center">'+
-									'<button class="bi bi-pencil-square name_edit_button"></button>'+
+									'<button class="bi bi-pencil-square expense_edit_button"></button>'+
 								'</td>'+
 								'<td scope="col" style="text-align:center">'+
-									'<button class="bi bi-x-square name_delete_button"></button>'+
+									'<button class="bi bi-x-square expense_delete_button"></button>'+
 								'</td>'+
 							'</tr>'+
 							expense_consumption_add_html+
@@ -905,6 +904,12 @@
 				
 				// 帳目刪除按鈕事件
 				expense_delete();
+				
+				// 帳目修改按鈕事件
+				expense_edit();
+				
+				// 設定資訊
+				$(".form_expense table tbody").last().data("expense_detail",expense_detail);
 			}
 			
 			// 帳目刪除按鈕事件
@@ -959,6 +964,462 @@
 						}
 					});
 				});
+			}
+			
+			// 帳目修改按鈕事件
+			function expense_edit(){
+				$("#expense_table tbody").last().find(".expense_edit_button").click(function(){
+					
+					// 取得該筆帳目資訊
+					let expense_detail=$(this).parent().parent().parent().data("expense_detail");
+					var edited_expense_table=$(this).parent().parent().parent();
+					
+					// 獲得名字選項
+					let name_list="";
+					$("#name_table tbody tr").each(function(index){
+						let name_now=$(this).find("td").first().text();
+						name_list+='<option value="'+name_now+'">'+name_now+'</option>';
+					});
+					
+					// 建立修改帳目之型態html
+					let expense_edit_type_select_html="";
+					let expense_edit_consumer_add_btn_hidden="";
+					if(expense_detail.expense_type_select=="group"){
+						expense_edit_type_select_html=" checked";
+						expense_edit_consumer_add_btn_hidden=" hidden";
+					}
+					
+					// 建立修改帳目之消費者html
+					let expense_edit_consumer_html="";
+					if(expense_detail.expense_type_select=="personal"){
+						for(var i=0;i<expense_detail.consumption_description.length;i++){
+							
+							// 取得消費者選項
+							let name_list_consumer="";
+							$("#name_table tbody tr").each(function(index){
+								let name_now=$(this).find("td").first().text();
+								if(name_now==expense_detail.consumption_consumer[i]){
+									name_list_consumer+='<option value="'+name_now+'" selected>'+name_now+'</option>';
+								}
+								else{
+									name_list_consumer+='<option value="'+name_now+'">'+name_now+'</option>';
+								}
+							});
+							
+							// 建立html
+							if(i==expense_detail.consumption_description.length-1){
+								expense_edit_consumer_html+='<div class="input-group mb-3" style="padding-left:3px;padding-right:3px;">';
+							}
+							else{
+								expense_edit_consumer_html+='<div class="input-group mb-0" style="padding-left:3px;padding-right:3px;">';
+							}
+									expense_edit_consumer_html+='<input type="text" placeholder="20字以內，選填" style="width:35%;" class="form-control consumption_description" value="'+expense_detail.consumption_description[i]+'" required/>';
+									expense_edit_consumer_html+='<button class="btn" type="button" style="padding:0px;border:0px;">';
+										expense_edit_consumer_html+='<select class="form-select consumption_consumer" style="border-radius:0px;" aria-label="Default select example">';
+											expense_edit_consumer_html+=name_list_consumer;
+										expense_edit_consumer_html+='</select>';
+									expense_edit_consumer_html+='</button>';
+									expense_edit_consumer_html+='<input type="number" placeholder="金額" style="text-align:right;" class="form-control consumption_charge" value="'+expense_detail.consumption_charge[i]+'" required/>';
+									expense_edit_consumer_html+='<span class="input-group-text">TWD</span>';
+									expense_edit_consumer_html+='<button class="bi bi-x consumer_delete_btn" type="button"></button>';
+								expense_edit_consumer_html+='</div>';
+						}
+					}
+					else if(expense_detail.expense_type_select=="group"){
+					
+						// 取得消費者選項
+						let name_list_consumer="";
+						$("#name_table tbody tr").each(function(index){
+							let name_now=$(this).find("td").first().text();
+							name_list_consumer+='<option value="'+name_now+'">'+name_now+'</option>';
+						});
+						
+						// 建立html
+						expense_edit_consumer_html+='<div class="input-group mb-3" style="padding-left:3px;padding-right:3px;display:none;">';
+							expense_edit_consumer_html+='<input type="text" placeholder="20字以內，選填" style="width:35%;" class="form-control consumption_description" required/>';
+							expense_edit_consumer_html+='<button class="btn" type="button" style="padding:0px;border:0px;">';
+								expense_edit_consumer_html+='<select class="form-select consumption_consumer" style="border-radius:0px;" aria-label="Default select example">';
+									expense_edit_consumer_html+=name_list_consumer;
+								expense_edit_consumer_html+='</select>';
+							expense_edit_consumer_html+='</button>';
+							expense_edit_consumer_html+='<input type="number" placeholder="金額" style="text-align:right;" class="form-control consumption_charge" required/>';
+							expense_edit_consumer_html+='<span class="input-group-text">TWD</span>';
+							expense_edit_consumer_html+='<button class="bi bi-x consumer_delete_btn" type="button"></button>';
+						expense_edit_consumer_html+='</div>';
+					}
+					
+					// 建立修改帳目之付費者html
+					let expense_edit_payer_html="";
+					for(var i=0;i<expense_detail.pay_description.length;i++){
+						
+						// 取得消費者選項
+						let name_list_payer="";
+						$("#name_table tbody tr").each(function(index){
+							let name_now=$(this).find("td").first().text();
+							if(name_now==expense_detail.pay_payer[i]){
+								name_list_payer+='<option value="'+name_now+'" selected>'+name_now+'</option>';
+							}
+							else{
+								name_list_payer+='<option value="'+name_now+'">'+name_now+'</option>';
+							}
+						});
+						
+						// 建立html
+						if(i==expense_detail.pay_description.length-1){
+							expense_edit_payer_html+='<div class="input-group mb-1" style="padding-left:3px;padding-right:3px;">';
+						}
+						else{
+							expense_edit_payer_html+='<div class="input-group mb-0" style="padding-left:3px;padding-right:3px;">';
+						}
+								expense_edit_payer_html+='<input type="text" placeholder="20字以內，選填" style="width:35%;" class="form-control pay_description" value="'+expense_detail.pay_description[i]+'" required/>';
+									expense_edit_payer_html+='<button class="btn" type="button" style="padding:0px;border:0px;">';
+										expense_edit_payer_html+='<select class="form-select pay_payer" style="border-radius:0px;" aria-label="Default select example">';
+											expense_edit_payer_html+=name_list_payer;
+										expense_edit_payer_html+='</select>';
+									expense_edit_payer_html+='</button>';
+									expense_edit_payer_html+='<input type="number" placeholder="金額" style="text-align:right;" class="form-control pay_charge" value="'+expense_detail.pay_charge[i]+'" required/>';
+									expense_edit_payer_html+='<span class="input-group-text">TWD</span>';
+									expense_edit_payer_html+='<button class="bi bi-x payer_delete_btn" type="button"></button>';
+								expense_edit_payer_html+='</div>';
+					}
+					
+					$.confirm({
+						title:"修改帳目：",
+						columnClass: "large",
+						content:''+
+							'<form action="" class="formName">'+
+								'<div class="form-group">'+
+								
+									// 帳目概述
+									'<div id="expense_overview" class="input-group mb-3" style="padding:3px;">'+
+										'<input type="text" placeholder="20字以內" style="width:35%;" class="form-control expense_description" value="'+expense_detail.expense_description+'" required/>'+
+										'<input type="number" placeholder="總金額" style="text-align:right;" class="form-control expense_charge" value="'+expense_detail.expense_charge+'" required/>'+
+										'<span class="input-group-text">TWD</span>'+
+									'</div>'+
+									
+									// 消費者
+									'<div id="consumer_overview" style="margin-bottom:10px;">'+
+										'<label for="" class="form-label" style="font-weight:bold;margin-bottom:-50px;font-size:18px;">消費者：</label>'+
+										'<button class="bi bi-plus-square consumer_add_btn"'+expense_edit_consumer_add_btn_hidden+'></button>'+
+										'<div class="form-check form-switch" style="display:flex;float:right;padding-right:5px;">'+
+											'<input class="form-check-input expense_type_select" type="checkbox" id="expense_type_select"'+expense_edit_type_select_html+'>'+
+											'<label class="form-check-label" for="expense_type_select"><b>均分消費</b></label>'+
+										'</div>'+
+										expense_edit_consumer_html+
+									'</div>'+
+									
+									// 付費者
+									'<div id="payer_overview">'+
+										'<label for="" class="form-label" style="font-weight:bold;margin-bottom:-50px;font-size:18px;">付費者：</label>'+
+										'<button class="bi bi-plus-square payer_add_btn"></button>'+
+										expense_edit_payer_html+
+									'</div>'+
+								'</div>'+
+							'</form>',
+						buttons: {
+							
+							// 彈出修改帳目確認框
+							formSubmit: {
+								text:"確定",
+								keys: ["enter"],
+								btnClass:"btn-blue",
+								action: function () {
+									
+									// 取得帳目資訊
+									let expense_description=$(".jconfirm").find(".expense_description").val();
+									let expense_type_select="personal";
+									if($(".jconfirm .expense_type_select").prop("checked")){
+										expense_type_select="group";
+									}
+									let expense_charge=$(".jconfirm").find(".expense_charge").val();
+									
+									// 取得消費資訊
+									let consumption_description=[];
+									let consumption_consumer=[];
+									let consumption_charge=[];
+									if(expense_type_select=="personal"){
+										$(".jconfirm").find(".consumption_description").each(function(){
+											consumption_description.push($(this).val());
+										});
+										$(".jconfirm").find(".consumption_consumer").each(function(){
+											consumption_consumer.push($(this).val());
+										});
+										$(".jconfirm").find(".consumption_charge").each(function(){
+											consumption_charge.push($(this).val());
+										});
+									}
+									
+									// 取得付費資訊
+									let pay_description=[];
+									$(".jconfirm").find(".pay_description").each(function(){
+										pay_description.push($(this).val());
+									});
+									let pay_payer=[];
+									$(".jconfirm").find(".pay_payer").each(function(){
+										pay_payer.push($(this).val());
+									});
+									let pay_charge=[];
+									$(".jconfirm").find(".pay_charge").each(function(){
+										pay_charge.push($(this).val());
+									});
+									
+									// 建立帳目物件
+									var expense_detail={
+										expense_description: expense_description,
+										expense_type_select: expense_type_select,
+										expense_charge: expense_charge,
+										consumption_description: consumption_description,
+										consumption_consumer: consumption_consumer,
+										consumption_charge: consumption_charge,
+										pay_description: pay_description,
+										pay_payer: pay_payer,
+										pay_charge: pay_charge
+									}
+									
+									// 檢查各輸入
+									let warning_text="";
+									if(!expense_description){
+										warning_text+="<b>帳目名稱</b> 請勿留白</div><div>";
+									}
+									else if(expense_description.length>=20){
+										warning_text+="<b>帳目名稱</b> 請輸入20字以內</div><div>";
+									}
+									if(!expense_charge){
+										warning_text+="<b>帳目金額</b> 請勿留白</div><div>";
+									}
+									if(expense_type_select=="personal"){
+										for(var i=0;i<consumption_description.length;i++){
+											if(consumption_description[i].length>20){
+												warning_text+="<b>消費敘述</b> 請輸入20字以內</div><div>";
+												break;
+											}
+										}
+										var consumption_sum=0;
+										for(var i=0;i<consumption_charge.length;i++){
+											if(!consumption_charge[i]){
+												warning_text+="<b>消費金額</b> 請勿留白</div><div>";
+												break;
+											}
+											consumption_sum+=Number(consumption_charge[i]);
+										}
+										if(i==consumption_charge.length){
+											if(consumption_sum!=expense_charge){
+												warning_text+="<b>消費總和</b>需等於<b>帳目金額</b></div><div>";
+											}
+										}
+									}
+									for(var i=0;i<pay_description.length;i++){
+										if(pay_description[i].length>20){
+											warning_text+="<b>付費敘述</b> 請輸入20字以內</div><div>";
+											break;
+										}
+									}
+									var pay_sum=0;
+									for(var i=0;i<pay_charge.length;i++){
+										if(!pay_charge[i]){
+											warning_text+="<b>付費金額</b> 請勿留白</div><div>";
+											break;
+										}
+										pay_sum+=Number(pay_charge[i]);
+									}
+									if(i==pay_charge.length){
+										if(pay_sum!=expense_charge){
+											warning_text+="<b>付費總和</b>需等於<b>帳目金額</b></div><div>";
+										}
+									}
+									if(warning_text.length>0){
+										$.alert({
+											title: "",
+											type: "red",
+											content: warning_text,
+											buttons: {
+												okBtn: {
+												text:"OK",
+													keys: ["esc","enter"],
+													action:	function(){
+													}
+												}
+											}
+										});
+										return false;
+									}
+									
+									// 若輸入皆合法
+									$.alert({
+										title: "",
+										type: "green",
+										content: "修改帳目成功",
+										autoClose: 'okBtn|1',
+										buttons: {
+											okBtn: {
+											text:"OK",
+												keys: ["esc","enter"],
+												action:	function(){
+												
+													// 修改帳目Table
+													expense_edit_table_change(expense_detail,edited_expense_table);
+												}
+											}
+										}
+									});
+								}
+							},
+							
+							// 取消新增帳目
+							cancelBtn: {
+								text:"取消",
+								keys: ["esc"],
+								action:	function(){}
+							}
+						},
+						onContentReady: function () {
+							
+							// 帳目類別改變事件
+							expense_type_change();
+							
+							// 消費者刪除按鈕事件
+							consumer_delete();
+							
+							// 付費者刪除按鈕事件
+							payer_delete();
+							
+							// 預覽輸入框
+							$(".jconfirm").find("input").first().focus();
+							
+							// 設定新增消費者
+							$(".jconfirm .consumer_add_btn").click(function(){
+								let consumer_add_html=''+
+									'<div class="input-group mb-3" style="padding-left:3px;padding-right:3px;">'+
+										'<input type="text" placeholder="20字以內，選填" style="width:35%;" class="form-control consumption_description" required/>'+
+										'<button class="btn" type="button" style="padding:0px;border:0px;">'+
+											'<select class="form-select consumption_consumer" style="border-radius:0px;" aria-label="Default select example">'+
+												name_list+
+											'</select>'+
+										'</button>'+
+										'<input type="number" placeholder="金額" style="text-align:right;" class="form-control consumption_charge" required/>'+
+										'<span class="input-group-text">TWD</span>'+
+										'<button class="bi bi-x consumer_delete_btn" type="button"></button>'+
+									'</div>';
+								$(".jconfirm #consumer_overview").find(".input-group").last().removeClass("mb-3");
+								$(".jconfirm #consumer_overview").find(".input-group").last().addClass("mb-0");
+								$(".jconfirm #consumer_overview").append(consumer_add_html);
+								
+								// 消費者刪除按鈕事件
+								consumer_delete();
+							});
+							
+							// 設定新增付費者
+							$(".jconfirm .payer_add_btn").click(function(){
+								let payer_add_html=''+
+									'<div class="input-group mb-1" style="padding-left:3px;padding-right:3px;">'+
+										'<input type="text" placeholder="20字以內，選填" style="width:35%;" class="form-control pay_description" required/>'+
+										'<button class="btn" type="button" style="padding:0px;border:0px;">'+
+											'<select class="form-select pay_payer" style="border-radius:0px;" aria-label="Default select example">'+
+												name_list+
+											'</select>'+
+										'</button>'+
+										'<input type="number" placeholder="金額" style="text-align:right;" class="form-control pay_charge" required/>'+
+										'<span class="input-group-text">TWD</span>'+
+										'<button class="bi bi-x payer_delete_btn" type="button"></button>'+
+									'</div>';
+								$(".jconfirm #payer_overview").find(".input-group").last().removeClass("mb-1");
+								$(".jconfirm #payer_overview").find(".input-group").last().addClass("mb-0");
+								$(".jconfirm #payer_overview").append(payer_add_html);
+								
+								// 付費者刪除按鈕事件
+								payer_delete();
+							});
+						}
+					});
+				});
+			}
+			
+			// 修改帳目Table
+			function expense_edit_table_change(expense_detail,edited_expense_table){
+				console.log(expense_detail);
+				console.log(edited_expense_table);
+				
+				// 取得帳目資訊
+				let expense_description=expense_detail.expense_description;
+				let expense_type_select="";
+				if(expense_detail.expense_type_select=="personal"){expense_type_select="一般消費";}
+				else if(expense_detail.expense_type_select=="group"){expense_type_select="均分消費";}
+				let expense_charge=expense_detail.expense_charge;
+				let consumption_description=expense_detail.consumption_description;
+				let consumption_consumer=expense_detail.consumption_consumer;
+				let consumption_charge=expense_detail.consumption_charge;
+				let pay_description=expense_detail.pay_description;
+				let pay_payer=expense_detail.pay_payer;
+				let pay_charge=expense_detail.pay_charge;
+				
+				//test
+				console.log(expense_description);
+				console.log(expense_type_select);
+				console.log(expense_charge);
+				console.log(consumption_description);
+				console.log(consumption_consumer);
+				console.log(consumption_charge);
+				console.log(pay_description);
+				console.log(pay_payer);
+				console.log(pay_charge);
+				
+				// 設定新增帳目之消費html
+				let expense_consumption_add_html="";
+				if(expense_type_select=="一般消費"){
+					for(var i=0;i<consumption_consumer.length;i++){
+						expense_consumption_add_html+='<tr>';
+							expense_consumption_add_html+='<th scope="col" style="vertical-align:middle">';
+							if(i==0){expense_consumption_add_html+='消費';}
+							expense_consumption_add_html+='</th>';
+								expense_consumption_add_html+='<td scope="col" style="vertical-align:middle">'+consumption_consumer[i]+'</td>';
+								expense_consumption_add_html+='<td scope="col" style="vertical-align:middle;text-align:right;">'+consumption_charge[i]+' 元</td>';
+								expense_consumption_add_html+='<td scope="col" colspan="3" style="vertical-align:middle;text-align:right;">'+consumption_description[i]+'</td>';
+						expense_consumption_add_html+='</tr>';
+					}
+				}
+				
+				// 設定新增帳目之付費html
+				let expense_pay_add_html="";
+				for(var i=0;i<pay_payer.length;i++){
+					expense_pay_add_html+='<tr>';
+						expense_pay_add_html+='<th scope="col" style="vertical-align:middle">';
+						if(i==0){expense_pay_add_html+='付費';}
+						expense_pay_add_html+='</th>';
+							expense_pay_add_html+='<td scope="col" style="vertical-align:middle">'+pay_payer[i]+'</td>';
+							expense_pay_add_html+='<td scope="col" style="vertical-align:middle;text-align:right;">'+pay_charge[i]+' 元</td>';
+							expense_pay_add_html+='<td scope="col" colspan="3" style="vertical-align:middle;text-align:right;">'+pay_description[i]+'</td>';
+					expense_pay_add_html+='</tr>';
+				}
+				
+				// 修改Table細節
+				edited_expense_table.empty();
+				let name_index=edited_expense_table.index();
+				edited_expense_table.append(''+
+					'<tr class="expense_table_main">'+
+						'<th scope="col" style="vertical-align:middle">'+(name_index+1)+'</th>'+
+						'<td scope="col" style="vertical-align:middle;text-align:">'+expense_description+'</td>'+
+						'<td scope="col" style="vertical-align:middle;text-align:right;">'+expense_charge+' 元</td>'+
+						'<td scope="col" style="vertical-align:middle;text-align:center;">'+expense_type_select+'</td>'+
+						'<td scope="col" style="text-align:center">'+
+							'<button class="bi bi-pencil-square expense_edit_button"></button>'+
+						'</td>'+
+						'<td scope="col" style="text-align:center">'+
+							'<button class="bi bi-x-square expense_delete_button"></button>'+
+						'</td>'+
+					'</tr>'+
+					expense_consumption_add_html+
+					expense_pay_add_html
+				);
+				$(".expense_table_main").children().css("--bs-table-accent-bg","var(--bs-table-striped-bg)");
+				
+				// 帳目刪除按鈕事件
+				expense_delete();
+				
+				// 帳目修改按鈕事件
+				expense_edit();
+				
+				// 設定資訊
+				edited_expense_table.data("expense_detail",expense_detail);
 			}
 		</script>
 		<style type="text/css">
