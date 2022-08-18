@@ -1421,6 +1421,19 @@
 				// 設定資訊
 				edited_expense_table.data("expense_detail",expense_detail);
 			}
+			
+			// 進入帳目分錢計算
+			function split_bills_compute(){
+				
+				// 取得每個人的消費結果
+				let bills_by_name=[];
+				$("#name_table tbody tr").each(function(index){
+					let name_now=$(this).find("td").first().text();
+					bills_by_name.push({name:name_now});
+				});
+				
+				//$("#expense_table tr")
+			}
 		</script>
 		<style type="text/css">
 			.title{
