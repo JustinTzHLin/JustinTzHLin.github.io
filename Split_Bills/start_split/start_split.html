@@ -1434,6 +1434,65 @@
 				
 				//$("#expense_table tr")
 			}
+			
+			// 權責優先法
+			function amount_first(bill_array,split_process){
+				let max_num=Math.max.apply(null,bill_array);
+				let max_index=bill_array.indexOf(max_num);
+				let min_num=Math.min.apply(null,bill_array);
+				let min_index=bill_array.indexOf(min_num);
+				let pay_amount=Math.min(max_num,Math.abs(min_num));
+				if(max_num!=min_num){
+					let copied_bill=JSON.parse(JSON.stringify(bill_array));
+					copied_bill[max_index]-=pay_amount;
+					copied_bill[min_index]+=pay_amount;
+					split_process.push([max_index,min_index,pay_amount]);
+					console.log(split_process);
+					amount_first(copied_bill,split_process);
+				}
+				else{return split_process;}
+			}
+			console.log(amount_first([-220, -200, -30, 230, 220],[]));
+			
+			// 窮舉計算法
+			class exhaustive_method{
+				backtrack(bill_array,index_now,step_now,process_now){
+					if(index_now==bill_array.length){
+						if(step_now<this.min_step){
+							this.min_step=step_now;
+							this.split_process=process_now;
+						}
+						return false;
+					}
+					if(bill_array[index_now]==0){
+						this.backtrack(bill_array,index_now+1,step_now,process_now);
+					}
+					for(var i=index_now+1;i<bill_array.length;i++){
+						if(bill_array[i]*bill_array[index_now]<0){
+							bill_array[i]+=bill_array[index_now];
+							
+							// 建立複製Array進行下一步計算
+							let copied_process=JSON.parse(JSON.stringify(process_now));
+							copied_process.push([i,index_now,bill_array[index_now]]);
+							this.backtrack(bill_array,index_now+1,step_now+1,copied_process);
+							//copied_process=JSON.parse(JSON.stringify(process_now));
+							bill_array[i]-=bill_array[index_now];
+						}
+					}
+				}
+				min_transfer_step(bill_array){
+					this.split_process=[];
+					this.min_step=Number.POSITIVE_INFINITY;
+					this.backtrack(bill_array,0,0,[]);
+					return [this.min_step,this.split_process];
+				}
+			}
+			
+			// 測試計算
+			let test_s=new exhaustive_method();
+			console.log(test_s.min_transfer_step([-220, -200, -30, 230, 220]));
+			console.log(test_s.min_transfer_step([3, 3, 3, 3, -4, -4, -4,]));
+			console.log(test_s.min_transfer_step([30, 20, -10, -40]));
 		</script>
 		<style type="text/css">
 			.title{
