@@ -37,6 +37,12 @@
 				
 				// 新增帳目按鈕事件
 				new_expense();
+				
+				// 帳目計算按鈕事件
+				bills_compute();
+				
+				// 帳目計算按鈕是否顯現
+				hide_bills_compute_btn();
 			});
 			
 			// 新增朋友按鈕事件
@@ -226,7 +232,6 @@
 									});
 									
 									// 若已經沒有朋友則清除Table
-									console.log($("#name_table tbody tr").length);
 									if(!$("#name_table tbody tr").length){
 										$("#name_table").remove();
 									}
@@ -817,7 +822,7 @@
 				let pay_payer=expense_detail.pay_payer;
 				let pay_charge=expense_detail.pay_charge;
 				
-				//test
+				/*
 				console.log(expense_description);
 				console.log(expense_type_select);
 				console.log(expense_charge);
@@ -827,6 +832,7 @@
 				console.log(pay_description);
 				console.log(pay_payer);
 				console.log(pay_charge);
+				*/
 				
 				// 設定新增帳目之消費html
 				let expense_consumption_add_html="";
@@ -908,6 +914,9 @@
 				// 帳目修改按鈕事件
 				expense_edit();
 				
+				// 帳目計算按鈕是否顯現
+				hide_bills_compute_btn();
+				
 				// 設定資訊
 				$(".form_expense table tbody").last().data("expense_detail",expense_detail);
 			}
@@ -954,6 +963,9 @@
 											$(this).find("th").first().text(index+1);
 										}
 									});
+									
+									// 帳目計算按鈕是否顯現
+									hide_bills_compute_btn();
 								}
 							},
 							cancelBtn: {
@@ -1352,7 +1364,7 @@
 				let pay_payer=expense_detail.pay_payer;
 				let pay_charge=expense_detail.pay_charge;
 				
-				//test
+				/*
 				console.log(expense_description);
 				console.log(expense_type_select);
 				console.log(expense_charge);
@@ -1362,6 +1374,7 @@
 				console.log(pay_description);
 				console.log(pay_payer);
 				console.log(pay_charge);
+				*/
 				
 				// 設定新增帳目之消費html
 				let expense_consumption_add_html="";
@@ -1422,6 +1435,23 @@
 				edited_expense_table.data("expense_detail",expense_detail);
 			}
 			
+			// 帳目計算按鈕事件
+			function bills_compute(){
+				$(".bills_compute_btn").click(function(){
+					alert("compute");
+				});
+			}
+			
+			// 帳目計算按鈕是否顯現
+			function hide_bills_compute_btn(){
+				if($(".form_expense tbody").length){
+					$(".bills_compute_btn").show();
+				}
+				else{
+					$(".bills_compute_btn").hide();
+				}
+			}
+			
 			// 進入帳目分錢計算
 			function split_bills_compute(){
 				
@@ -1436,6 +1466,7 @@
 			}
 			
 			// 權責優先法
+			// 非最佳解 淘汰
 			function amount_first(bill_array,split_process){
 				let max_num=Math.max.apply(null,bill_array);
 				let max_index=bill_array.indexOf(max_num);
@@ -1447,14 +1478,16 @@
 					copied_bill[max_index]-=pay_amount;
 					copied_bill[min_index]+=pay_amount;
 					split_process.push([max_index,min_index,pay_amount]);
-					console.log(split_process);
-					amount_first(copied_bill,split_process);
+					return amount_first(copied_bill,split_process);
 				}
-				else{return split_process;}
+				else{
+					return split_process;
+				}
 			}
 			console.log(amount_first([-220, -200, -30, 230, 220],[]));
 			
 			// 窮舉計算法
+			// 會出現債權身分改變 需改善
 			class exhaustive_method{
 				backtrack(bill_array,index_now,step_now,process_now){
 					if(index_now==bill_array.length){
@@ -1475,8 +1508,51 @@
 							let copied_process=JSON.parse(JSON.stringify(process_now));
 							copied_process.push([i,index_now,bill_array[index_now]]);
 							this.backtrack(bill_array,index_now+1,step_now+1,copied_process);
-							//copied_process=JSON.parse(JSON.stringify(process_now));
 							bill_array[i]-=bill_array[index_now];
+						}
+					}
+				}
+				min_transfer_step(bill_array){
+					this.split_process=[];
+					this.min_step=Number.POSITIVE_INFINITY;
+					this.backtrack(bill_array,0,0,[]);
+					return [this.min_step,this.split_process];
+				}
+			}
+			
+			// 窮舉計算法–進階版
+			// 不會有身分改變 可用
+			class exhaustive_method_2{
+				backtrack(bill_array,index_now,step_now,process_now){
+					if(index_now==bill_array.length){
+						if(step_now<this.min_step){
+							this.min_step=step_now;
+							this.split_process=process_now;
+						}
+						return false;
+					}
+					if(bill_array[index_now]<=0){
+						this.backtrack(bill_array,index_now+1,step_now,process_now);
+					}
+					else if(bill_array[index_now]>0){
+						for(var i=0;i<bill_array.length;i++){
+							if(bill_array[i]<0){
+								let bill_payed=Math.min(bill_array[index_now],Math.abs(bill_array[i]));
+								bill_array[i]+=bill_payed;
+								bill_array[index_now]-=bill_payed;
+								
+								// 建立複製Array進行下一步計算
+								let copied_process=JSON.parse(JSON.stringify(process_now));
+								copied_process.push([i,index_now,bill_payed]);
+								if(bill_array[index_now]==0){
+									this.backtrack(bill_array,index_now+1,step_now+1,copied_process);
+								}
+								else{
+									this.backtrack(bill_array,index_now,step_now+1,copied_process);
+								}
+								bill_array[i]-=bill_payed;
+								bill_array[index_now]+=bill_payed;
+							}
 						}
 					}
 				}
@@ -1490,9 +1566,17 @@
 			
 			// 測試計算
 			let test_s=new exhaustive_method();
-			console.log(test_s.min_transfer_step([-220, -200, -30, 230, 220]));
+			console.log(test_s.min_transfer_step([-220, -200, -30, 220, 230]));
 			console.log(test_s.min_transfer_step([3, 3, 3, 3, -4, -4, -4,]));
 			console.log(test_s.min_transfer_step([30, 20, -10, -40]));
+			console.log(test_s.min_transfer_step([80,-30,-50]));
+			
+			// 測試計算
+			let test_s2=new exhaustive_method_2();
+			console.log(test_s2.min_transfer_step([-220, -200, -30, 220, 230]));
+			console.log(test_s2.min_transfer_step([3, 3, 3, 3, -4, -4, -4,]));
+			console.log(test_s2.min_transfer_step([30, 20, -10, -40]));
+			console.log(test_s2.min_transfer_step([80,-30,-50]));
 		</script>
 		<style type="text/css">
 			.title{
@@ -1589,6 +1673,9 @@
 										<!-- 新增帳目 -->
 										<div class="d-grid col-6 offset-3">
 											<button class="btn btn-outline-dark new_expense_btn" name="new_expense_btn">新增帳目</button>
+										</div>
+										<div class="d-grid col-2">
+											<button class="btn btn-primary bills_compute_btn" name="bills_compute_btn">計算</button>
 										</div>
 									</div>
 								</div>
