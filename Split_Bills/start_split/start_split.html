@@ -838,13 +838,13 @@
 				let expense_consumption_add_html="";
 				if(expense_type_select=="一般消費"){
 					for(var i=0;i<consumption_consumer.length;i++){
-						expense_consumption_add_html+='<tr>';
+						expense_consumption_add_html+='<tr class="consumption_tr">';
 							expense_consumption_add_html+='<th scope="col" style="vertical-align:middle">';
 							if(i==0){expense_consumption_add_html+='消費';}
 							expense_consumption_add_html+='</th>';
-								expense_consumption_add_html+='<td scope="col" style="vertical-align:middle">'+consumption_consumer[i]+'</td>';
-								expense_consumption_add_html+='<td scope="col" style="vertical-align:middle;text-align:right;">'+consumption_charge[i]+' 元</td>';
-								expense_consumption_add_html+='<td scope="col" colspan="3" style="vertical-align:middle;text-align:right;">'+consumption_description[i]+'</td>';
+								expense_consumption_add_html+='<td class="consumer_name" scope="col" style="vertical-align:middle">'+consumption_consumer[i]+'</td>';
+								expense_consumption_add_html+='<td class="consumer_amount" scope="col" style="vertical-align:middle;text-align:right;">'+consumption_charge[i]+' 元</td>';
+								expense_consumption_add_html+='<td class="consumer_description" scope="col" colspan="3" style="vertical-align:middle;text-align:right;">'+consumption_description[i]+'</td>';
 						expense_consumption_add_html+='</tr>';
 					}
 				}
@@ -852,13 +852,13 @@
 				// 設定新增帳目之付費html
 				let expense_pay_add_html="";
 				for(var i=0;i<pay_payer.length;i++){
-					expense_pay_add_html+='<tr>';
+					expense_pay_add_html+='<tr class="pay_tr">';
 						expense_pay_add_html+='<th scope="col" style="vertical-align:middle">';
 						if(i==0){expense_pay_add_html+='付費';}
 						expense_pay_add_html+='</th>';
-							expense_pay_add_html+='<td scope="col" style="vertical-align:middle">'+pay_payer[i]+'</td>';
-							expense_pay_add_html+='<td scope="col" style="vertical-align:middle;text-align:right;">'+pay_charge[i]+' 元</td>';
-							expense_pay_add_html+='<td scope="col" colspan="3" style="vertical-align:middle;text-align:right;">'+pay_description[i]+'</td>';
+							expense_pay_add_html+='<td class="payer_name" scope="col" style="vertical-align:middle">'+pay_payer[i]+'</td>';
+							expense_pay_add_html+='<td class="payer_amount" scope="col" style="vertical-align:middle;text-align:right;">'+pay_charge[i]+' 元</td>';
+							expense_pay_add_html+='<td class="payer_description" scope="col" colspan="3" style="vertical-align:middle;text-align:right;">'+pay_description[i]+'</td>';
 					expense_pay_add_html+='</tr>';
 				}
 				
@@ -1376,17 +1376,17 @@
 				console.log(pay_charge);
 				*/
 				
-				// 設定新增帳目之消費html
+				// 設定修改帳目之消費html
 				let expense_consumption_add_html="";
 				if(expense_type_select=="一般消費"){
 					for(var i=0;i<consumption_consumer.length;i++){
-						expense_consumption_add_html+='<tr>';
+						expense_consumption_add_html+='<tr class="consumption_tr">';
 							expense_consumption_add_html+='<th scope="col" style="vertical-align:middle">';
 							if(i==0){expense_consumption_add_html+='消費';}
 							expense_consumption_add_html+='</th>';
-								expense_consumption_add_html+='<td scope="col" style="vertical-align:middle">'+consumption_consumer[i]+'</td>';
-								expense_consumption_add_html+='<td scope="col" style="vertical-align:middle;text-align:right;">'+consumption_charge[i]+' 元</td>';
-								expense_consumption_add_html+='<td scope="col" colspan="3" style="vertical-align:middle;text-align:right;">'+consumption_description[i]+'</td>';
+								expense_consumption_add_html+='<td class="consumer_name" scope="col" style="vertical-align:middle">'+consumption_consumer[i]+'</td>';
+								expense_consumption_add_html+='<td class="consumer_amount" scope="col" style="vertical-align:middle;text-align:right;">'+consumption_charge[i]+' 元</td>';
+								expense_consumption_add_html+='<td class="consumer_description" scope="col" colspan="3" style="vertical-align:middle;text-align:right;">'+consumption_description[i]+'</td>';
 						expense_consumption_add_html+='</tr>';
 					}
 				}
@@ -1394,13 +1394,13 @@
 				// 設定新增帳目之付費html
 				let expense_pay_add_html="";
 				for(var i=0;i<pay_payer.length;i++){
-					expense_pay_add_html+='<tr>';
+					expense_pay_add_html+='<tr class="pay_tr">';
 						expense_pay_add_html+='<th scope="col" style="vertical-align:middle">';
 						if(i==0){expense_pay_add_html+='付費';}
 						expense_pay_add_html+='</th>';
-							expense_pay_add_html+='<td scope="col" style="vertical-align:middle">'+pay_payer[i]+'</td>';
-							expense_pay_add_html+='<td scope="col" style="vertical-align:middle;text-align:right;">'+pay_charge[i]+' 元</td>';
-							expense_pay_add_html+='<td scope="col" colspan="3" style="vertical-align:middle;text-align:right;">'+pay_description[i]+'</td>';
+							expense_pay_add_html+='<td scope="col" class="payer_name" style="vertical-align:middle">'+pay_payer[i]+'</td>';
+							expense_pay_add_html+='<td scope="col" class="payer_amount" style="vertical-align:middle;text-align:right;">'+pay_charge[i]+' 元</td>';
+							expense_pay_add_html+='<td scope="col" class="payer_description" colspan="3" style="vertical-align:middle;text-align:right;">'+pay_description[i]+'</td>';
 					expense_pay_add_html+='</tr>';
 				}
 				
@@ -1438,7 +1438,9 @@
 			// 帳目計算按鈕事件
 			function bills_compute(){
 				$(".bills_compute_btn").click(function(){
-					alert("compute");
+					
+					// 進入帳目分錢計算
+					split_bills_compute();
 				});
 			}
 			
@@ -1455,14 +1457,53 @@
 			// 進入帳目分錢計算
 			function split_bills_compute(){
 				
-				// 取得每個人的消費結果
+				// 建立每個人的消費結果
 				let bills_by_name=[];
+				let name_array=[];
 				$("#name_table tbody tr").each(function(index){
 					let name_now=$(this).find("td").first().text();
-					bills_by_name.push({name:name_now});
+					name_array.push(name_now);
+					bills_by_name[name_now]=[];
+					bills_by_name[name_now]["bill_amount"]=0.0;
 				});
 				
-				//$("#expense_table tr")
+				//
+				$(".form_expense table tbody").each(function(){
+					let expense_detail=$(this).data("expense_detail");
+					if(expense_detail.expense_type_select=="group"){
+						for(var i=0;i<name_array.length;i++){
+							bills_by_name[name_array[i]]["bill_amount"]-=Number(expense_detail.expense_charge/3.0);
+						}
+					}
+					else if(expense_detail.expense_type_select=="personal"){
+						for(var i=0;i<expense_detail.consumption_charge.length;i++){
+							bills_by_name[expense_detail.consumption_consumer[i]]["bill_amount"]-=Number(expense_detail.consumption_charge[i]);
+						}
+					}
+					for(var i=0;i<expense_detail.pay_charge.length;i++){
+						bills_by_name[expense_detail.pay_payer[i]]["bill_amount"]+=Number(expense_detail.pay_charge[i]);
+					}
+				});
+				console.log(bills_by_name);
+				
+				// 取得簡易陣列
+				let bill_array=[];
+				$("#name_table tbody tr").each(function(index){
+					let name_now=$(this).find("td").first().text();
+					bill_array.push(bills_by_name[name_now]["bill_amount"]);
+				});
+				let split_method=new exhaustive_method_2();
+				let split_process_array=split_method.min_transfer_step(bill_array);
+				console.log(split_process_array);
+				
+				// 顯示分錢結果
+				split_result_display(split_process_array,name_array);
+			}
+			
+			// 顯示分錢結果
+			function split_result_display(split_process_array){
+				let split_result=split_process_array[1];
+				
 			}
 			
 			// 權責優先法
