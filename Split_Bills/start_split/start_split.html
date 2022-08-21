@@ -38,6 +38,9 @@
 				// 新增帳目按鈕事件
 				new_expense();
 				
+				// 新增條件按鈕事件
+				new_split_condition();
+				
 				// 帳目計算按鈕事件
 				bills_compute();
 				
@@ -1435,6 +1438,70 @@
 				edited_expense_table.data("expense_detail",expense_detail);
 			}
 			
+			// 新增條件按鈕事件
+			function new_split_condition(){
+				$(".new_split_condition_btn").click(function(){
+					if($("#name_table tbody tr").length<=1){
+						$.alert({
+							title: "",
+							type: "red",
+							content: "請至少新增2位朋友",
+							buttons: {
+								okBtn: {
+								text:"OK",
+									keys: ["esc","enter"],
+									action:	function(){
+										$(".new_people_btn").focus();
+									}
+								}
+							}
+						});
+						return false;
+					}
+					
+					// 彈出新增條件確認框
+					$.confirm({
+						title: "請選擇條件類型",
+						columnClass: "medium",
+						content: ''+
+							'<div class="btn-group" role="group" aria-label="Basic radio toggle button group" style="display:flex;padding:5px;">'+
+								'<input type="radio" class="btn-check" name="btnradio" id="paid_debt" autocomplete="off" value="paid_debt" checked>'+
+								'<label class="btn btn-outline-dark" for="paid_debt" style="width:25%;">已還</label>'+
+
+								'<input type="radio" class="btn-check" name="btnradio" id="pay_for" autocomplete="off" value="pay_for">'+
+								'<label class="btn btn-outline-dark" for="pay_for" style="width:25%;">代付</label>'+
+
+								'<input type="radio" class="btn-check" name="btnradio" id="take_for" autocomplete="off" value="take_for">'+
+								'<label class="btn btn-outline-dark" for="take_for" style="width:25%;">代收</label>'+
+								
+								'<input type="radio" class="btn-check" name="btnradio" id="merge_debt" autocomplete="off" value="merge_debt">'+
+								'<label class="btn btn-outline-dark" for="merge_debt" style="width:25%;">合併債權</label>'+
+							'</div>',
+						buttons: {
+							deleteBtn: {
+								text: "確認",
+								btnClass: 'btn-blue',
+								keys: ['enter','shift'],
+								action: function(){
+									alert($(".jconfirm input[name=btnradio]:checked").val());
+									
+								}
+							},
+							cancelBtn: {
+								text:"取消",
+								keys: ['esc'],
+								action:	function(){}
+							}
+						},
+						onContentReady: function () {
+							$(".jconfirm input").change(function(){
+								alert($(".jconfirm input[name=btnradio]:checked").val());
+							});
+						}
+					});
+				});
+			}
+			
 			// 帳目計算按鈕事件
 			function bills_compute(){
 				$(".bills_compute_btn").click(function(){
@@ -1504,7 +1571,6 @@
 			function split_result_display(split_process_array,name_array){
 				let split_result=split_process_array[1];
 				let split_result_html='<div class="container" style="text-align:center;">';
-				//'<b>'+name_array[split_result[i][0]]+'</b>'+split_result[i][2]+'<i class="bi bi-arrow-right"></i>'+'<b>'+name_array[split_result[i][1]]+'</b>';
 				for(var i=0;i<split_result.length;i++){
 					split_result_html+='<div class="row">';
 						split_result_html+='<div class="col-3">';
@@ -1730,7 +1796,7 @@
 										
 										<!-- 新增分帳條件 -->
 										<div class="d-grid col-6 offset-3">
-											<button class="btn btn-outline-dark new_split_condition_btn" name="new_people_btn">新增分帳條件</button>
+											<button class="btn btn-outline-dark new_split_condition_btn" name="new_split_condition_btn">新增分帳條件</button>
 										</div>
 									</div>
 								</div>
