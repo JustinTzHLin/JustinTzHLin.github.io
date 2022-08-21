@@ -1472,7 +1472,7 @@
 					let expense_detail=$(this).data("expense_detail");
 					if(expense_detail.expense_type_select=="group"){
 						for(var i=0;i<name_array.length;i++){
-							bills_by_name[name_array[i]]["bill_amount"]-=Number(expense_detail.expense_charge/3.0);
+							bills_by_name[name_array[i]]["bill_amount"]-=Number(expense_detail.expense_charge/name_array.length);
 						}
 					}
 					else if(expense_detail.expense_type_select=="personal"){
@@ -1501,9 +1501,47 @@
 			}
 			
 			// 顯示分錢結果
-			function split_result_display(split_process_array){
+			function split_result_display(split_process_array,name_array){
 				let split_result=split_process_array[1];
-				
+				let split_result_html='<div class="container" style="text-align:center;">';
+				//'<b>'+name_array[split_result[i][0]]+'</b>'+split_result[i][2]+'<i class="bi bi-arrow-right"></i>'+'<b>'+name_array[split_result[i][1]]+'</b>';
+				for(var i=0;i<split_result.length;i++){
+					split_result_html+='<div class="row">';
+						split_result_html+='<div class="col-3">';
+							split_result_html+='<b>'+name_array[split_result[i][0]]+'</b>';
+						split_result_html+='</div>';
+						split_result_html+='<div class="col-3" style="text-align:right;">';
+							split_result_html+=(Math.round((split_result[i][2]+Number.EPSILON)*100)/100)+' 元';
+						split_result_html+='</div>';
+						split_result_html+='<div class="col-2">';
+							split_result_html+='<i class="bi bi-arrow-right"></i>';
+						split_result_html+='</div>';
+						split_result_html+='<div class="col-4">';
+							split_result_html+='<b>'+name_array[split_result[i][1]]+'</b>';
+						split_result_html+='</div>';
+					split_result_html+='</div>';
+				}
+				split_result_html+='</div>';
+				$.confirm({
+					title: "分錢結果",
+					columnClass: "large",
+					content: split_result_html,
+					buttons: {
+						saveResult: {
+							text: "儲存結果",
+							btnClass: 'btn-blue',
+							keys: ['enter', 'shift'],
+							action: function(){
+								$.alert("此功能還在製作中...");
+							}
+						},
+						okBtn: {
+							text:"OK",
+							keys: ['esc'],
+							action:	function(){}
+						}
+					}
+				});
 			}
 			
 			// 權責優先法
