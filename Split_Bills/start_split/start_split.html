@@ -688,7 +688,6 @@
 								text:"OK",
 									keys: ["esc","enter"],
 									action:	function(){
-										//$(".jconfirm").find("input").focus();
 									}
 								}
 							}
@@ -1459,12 +1458,19 @@
 						return false;
 					}
 					
+					// 獲得名字選項
+					let name_list="";
+					$("#name_table tbody tr").each(function(index){
+						let name_now=$(this).find("td").first().text();
+						name_list+='<option value="'+name_now+'">'+name_now+'</option>';
+					});
+					
 					// 彈出新增條件確認框
 					$.confirm({
 						title: "請選擇條件類型",
 						columnClass: "medium",
 						content: ''+
-							'<div class="btn-group" role="group" aria-label="Basic radio toggle button group" style="display:flex;padding:5px;">'+
+							'<div class="btn-group mb-3" role="group" aria-label="Basic radio toggle button group" style="display:flex;padding:5px;">'+
 								'<input type="radio" class="btn-check" name="btnradio" id="paid_debt" autocomplete="off" value="paid_debt" checked>'+
 								'<label class="btn btn-outline-dark" for="paid_debt" style="width:25%;">已還</label>'+
 
@@ -1476,15 +1482,58 @@
 								
 								'<input type="radio" class="btn-check" name="btnradio" id="merge_debt" autocomplete="off" value="merge_debt">'+
 								'<label class="btn btn-outline-dark" for="merge_debt" style="width:25%;">合併債權</label>'+
+							'</div>'+
+							'<div class="input-group mb-1" style="padding-left:3px;padding-right:3px;">'+
+								'<button class="btn" type="button" style="padding:0px;border:0px;">'+
+									'<select class="form-select paid_debt_payer" style="border-radius:0px;border-top-left-radius:0.25rem;border-bottom-left-radius:0.25rem;" aria-label="Default select example">'+
+										name_list+
+									'</select>'+
+								'</button>'+
+								'<span class="input-group-text">已經還</span>'+
+								'<button class="btn" type="button" style="padding:0px;border:0px;">'+
+									'<select class="form-select paid_debt_payer" style="border-radius:0px;" aria-label="Default select example">'+
+										name_list+
+									'</select>'+
+								'</button>'+
+								'<input type="number" placeholder="金額" style="text-align:right;" class="form-control paid_debt_amount" required/>'+
+								'<span class="input-group-text">TWD</span>'+
 							'</div>',
 						buttons: {
-							deleteBtn: {
+							formSubmit: {
 								text: "確認",
 								btnClass: 'btn-blue',
 								keys: ['enter','shift'],
 								action: function(){
-									alert($(".jconfirm input[name=btnradio]:checked").val());
+								
+									// 建立提示
+									let former_name=$(".jconfirm .input-group .form-select").eq(0).val();
+									let latter_name=$(".jconfirm .input-group .form-select").eq(1).val();
+									let condition_amount=$(".jconfirm .input-group input").val();
+									let warning_text="";
+									if(former_name==latter_name){
+										warning_text+="<b>雙方名字</b> 不可相同</div><div>";
+									}
+									if(!condition_amount.length){
+										warning_text+="<b>條件金額</b> 請勿留白</div><div>";
+									}
+									if(warning_text.length>0){
+										$.alert({
+											title: "",
+											type: "red",
+											content: warning_text,
+											buttons: {
+												okBtn: {
+												text:"OK",
+													keys: ["esc","enter"],
+													action:	function(){
+													}
+												}
+											}
+										});
+										return false;
+									}
 									
+									// 建立條件Table
 								}
 							},
 							cancelBtn: {
@@ -1494,8 +1543,72 @@
 							}
 						},
 						onContentReady: function () {
-							$(".jconfirm input").change(function(){
-								alert($(".jconfirm input[name=btnradio]:checked").val());
+							$(".jconfirm .btn-group input").change(function(){
+								$(".jconfirm .input-group").empty();
+								let split_condition_html="";
+								if($(".jconfirm .btn-group input[name=btnradio]:checked").val()=="paid_debt"){
+									split_condition_html+='<button class="btn" type="button" style="padding:0px;border:0px;">';
+										split_condition_html+='<select class="form-select paid_debt_payer" style="border-radius:0px;border-top-left-radius:0.25rem;border-bottom-left-radius:0.25rem;" aria-label="Default select example">';
+											split_condition_html+=name_list;
+										split_condition_html+='</select>';
+									split_condition_html+='</button>';
+									split_condition_html+='<span class="input-group-text">已經還</span>';
+									split_condition_html+='<button class="btn" type="button" style="padding:0px;border:0px;">';
+										split_condition_html+='<select class="form-select paid_debt_taker" style="border-radius:0px;" aria-label="Default select example">';
+											split_condition_html+=name_list;
+										split_condition_html+='</select>';
+									split_condition_html+='</button>';
+									split_condition_html+='<input type="number" placeholder="金額" style="text-align:right;" class="form-control paid_debt_amount" required/>';
+									split_condition_html+='<span class="input-group-text">TWD</span>';
+								}
+								else if($(".jconfirm .btn-group input[name=btnradio]:checked").val()=="pay_for"){
+									split_condition_html+='<button class="btn" type="button" style="padding:0px;border:0px;">';
+										split_condition_html+='<select class="form-select pay_for_helper" style="border-radius:0px;border-top-left-radius:0.25rem;border-bottom-left-radius:0.25rem;" aria-label="Default select example">';
+											split_condition_html+=name_list;
+										split_condition_html+='</select>';
+									split_condition_html+='</button>';
+									split_condition_html+='<span class="input-group-text">代替</span>';
+									split_condition_html+='<button class="btn" type="button" style="padding:0px;border:0px;">';
+										split_condition_html+='<select class="form-select pay_for_helped" style="border-radius:0px;" aria-label="Default select example">';
+											split_condition_html+=name_list;
+										split_condition_html+='</select>';
+									split_condition_html+='</button>';
+									split_condition_html+='<span class="input-group-text">付</span>';
+									split_condition_html+='<input type="number" placeholder="金額" style="text-align:right;" class="form-control pay_for_amount" required/>';
+									split_condition_html+='<span class="input-group-text">TWD</span>';
+								}
+								else if($(".jconfirm .btn-group input[name=btnradio]:checked").val()=="take_for"){
+									split_condition_html+='<button class="btn" type="button" style="padding:0px;border:0px;">';
+										split_condition_html+='<select class="form-select take_for_helper" style="border-radius:0px;border-top-left-radius:0.25rem;border-bottom-left-radius:0.25rem;" aria-label="Default select example">';
+											split_condition_html+=name_list;
+										split_condition_html+='</select>';
+									split_condition_html+='</button>';
+									split_condition_html+='<span class="input-group-text">代替</span>';
+									split_condition_html+='<button class="btn" type="button" style="padding:0px;border:0px;">';
+										split_condition_html+='<select class="form-select take_for_helped" style="border-radius:0px;" aria-label="Default select example">';
+											split_condition_html+=name_list;
+										split_condition_html+='</select>';
+									split_condition_html+='</button>';
+									split_condition_html+='<span class="input-group-text">收</span>';
+									split_condition_html+='<input type="number" placeholder="金額" style="text-align:right;" class="form-control take_for_amount" required/>';
+									split_condition_html+='<span class="input-group-text">TWD</span>';
+								}
+								else if($(".jconfirm .btn-group input[name=btnradio]:checked").val()=="merge_debt"){
+									split_condition_html+='<button class="btn" type="button" style="padding:0px;border:0px;">';
+										split_condition_html+='<select class="form-select merge_debt_payer" style="border-radius:0px;border-top-left-radius:0.25rem;border-bottom-left-radius:0.25rem;" aria-label="Default select example">';
+											split_condition_html+=name_list;
+										split_condition_html+='</select>';
+									split_condition_html+='</button>';
+									split_condition_html+='<span class="input-group-text">要還</span>';
+									split_condition_html+='<button class="btn" type="button" style="padding:0px;border:0px;">';
+										split_condition_html+='<select class="form-select merge_debt_taker" style="border-radius:0px;" aria-label="Default select example">';
+											split_condition_html+=name_list;
+										split_condition_html+='</select>';
+									split_condition_html+='</button>';
+									split_condition_html+='<input type="number" placeholder="金額" style="text-align:right;" class="form-control merge_debt_amount" required/>';
+									split_condition_html+='<span class="input-group-text">TWD</span>';
+								}
+								$(".jconfirm .input-group").append(split_condition_html);
 							});
 						}
 					});
