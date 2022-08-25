@@ -69,7 +69,8 @@
 	text-align:center;
 	padding:20px;
 }
-.new_split_condition_btn{
+.split_condition_table_main{
+	cursor:pointer;
 }
 
 .jconfirm-title{

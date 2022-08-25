@@ -1353,18 +1353,6 @@
 				let pay_payer=expense_detail.pay_payer;
 				let pay_charge=expense_detail.pay_charge;
 				
-				/*
-				console.log(expense_description);
-				console.log(expense_type_select);
-				console.log(expense_charge);
-				console.log(consumption_description);
-				console.log(consumption_consumer);
-				console.log(consumption_charge);
-				console.log(pay_description);
-				console.log(pay_payer);
-				console.log(pay_charge);
-				*/
-				
 				// 設定修改帳目之消費html
 				let expense_consumption_add_html="";
 				if(expense_type_select=="一般消費"){
@@ -1455,7 +1443,7 @@
 					// 彈出新增條件確認框
 					$.confirm({
 						title: "請選擇條件類型",
-						columnClass: "medium",
+						columnClass: "large",
 						content: ''+
 							'<div class="btn-group mb-3" role="group" aria-label="Basic radio toggle button group" style="display:flex;padding:5px;">'+
 								'<input type="radio" class="btn-check" name="btnradio" id="paid_debt" autocomplete="off" value="paid_debt" checked>'+
@@ -1605,7 +1593,9 @@
 									split_condition_html+='<span class="input-group-text">TWD</span>';
 								}
 								$(".jconfirm .input-group").append(split_condition_html);
+								$(".jconfirm .input-group input").focus();
 							});
+							$(".jconfirm .input-group input").focus();
 						}
 					});
 				});
@@ -1682,7 +1672,10 @@
 						'</table>'
 					);
 				}
-				$(".form_split_condition table tbody tr").data("split_condition_detail",split_condition_detail);
+				$(".form_split_condition table tbody tr").last().data("split_condition_detail",split_condition_detail);
+				$(".form_split_condition table tbody tr").last().click(function(){
+					alert("click");
+				});
 			}
 			
 			// 帳目計算按鈕事件
@@ -1736,22 +1729,66 @@
 				});
 				console.log(bills_by_name);
 				
+				// 加入分帳條件
+				let bills_after_apply=split_conditions_apply(bills_by_name);
+				//bills_by_name=JSON.parse(JSON.stringify(bills_after_apply[0]));
+				let condition_array=JSON.parse(JSON.stringify(bills_after_apply[1]));;
+				console.log(condition_array);
 				// 取得簡易陣列
 				let bill_array=[];
 				$("#name_table tbody tr").each(function(index){
 					let name_now=$(this).find("td").first().text();
 					bill_array.push(bills_by_name[name_now]["bill_amount"]);
 				});
+				
 				let split_method=new exhaustive_method_2();
 				let split_process_array=split_method.min_transfer_step(bill_array);
 				console.log(split_process_array);
 				
 				// 顯示分錢結果
-				split_result_display(split_process_array,name_array);
+				split_result_display(split_process_array,name_array,condition_array);
+			}
+			
+			//加入分帳條件
+			function split_conditions_apply(bills_by_name){
+				let condition_array=[];
+				$(".form_split_condition #split_condition_table tbody tr").each(function(index){
+				
+					// 取得必要資訊
+					let split_condition_detail=$(this).data("split_condition_detail");
+					let split_condition_type=split_condition_detail.split_condition_type;
+					let former_name=split_condition_detail.former_name;
+					let latter_name=split_condition_detail.latter_name;
+					let condition_amount=split_condition_detail.condition_amount;
+					
+					// 依據類型進行操作
+					if(split_condition_type=="paid_debt"){
+						bills_by_name[former_name]["bill_amount"]+=Number(condition_amount);
+						bills_by_name[latter_name]["bill_amount"]-=Number(condition_amount);
+						console.log(bills_by_name);
+					}
+					else if(split_condition_type=="pay_for"){
+						bills_by_name[former_name]["bill_amount"]-=Number(condition_amount);
+						bills_by_name[latter_name]["bill_amount"]+=Number(condition_amount);
+						condition_array.push([latter_name,former_name,condition_amount]);
+					}
+					else if(split_condition_type=="take_for"){
+						bills_by_name[former_name]["bill_amount"]+=Number(condition_amount);
+						bills_by_name[latter_name]["bill_amount"]-=Number(condition_amount);
+						condition_array.push([former_name,latter_name,condition_amount]);
+					}
+					else if(split_condition_type=="merge_debt"){
+						bills_by_name[former_name]["bill_amount"]-=Number(condition_amount);
+						bills_by_name[latter_name]["bill_amount"]+=Number(condition_amount);
+					}
+				})
+				
+				// 回傳結果
+				return [bills_by_name,condition_array];
 			}
 			
 			// 顯示分錢結果
-			function split_result_display(split_process_array,name_array){
+			function split_result_display(split_process_array,name_array,condition_array){
 				let split_result=split_process_array[1];
 				let split_result_html='<div class="container" style="text-align:center;">';
 				for(var i=0;i<split_result.length;i++){
@@ -1770,7 +1807,28 @@
 						split_result_html+='</div>';
 					split_result_html+='</div>';
 				}
+				
+				// 加入條件結果
+				if(condition_array.length){
+					for(var i=0;i<condition_array.length;i++){
+						split_result_html+='<div class="row">';
+							split_result_html+='<div class="col-3">';
+								split_result_html+='<b>'+condition_array[i][0]+'</b>';
+							split_result_html+='</div>';
+							split_result_html+='<div class="col-3" style="text-align:right;">';
+								split_result_html+=(Math.round((Number(condition_array[i][2])+Number.EPSILON)*100)/100)+' 元';
+							split_result_html+='</div>';
+							split_result_html+='<div class="col-2">';
+								split_result_html+='<i class="bi bi-arrow-right"></i>';
+							split_result_html+='</div>';
+							split_result_html+='<div class="col-4">';
+								split_result_html+='<b>'+condition_array[i][1]+'</b>';
+							split_result_html+='</div>';
+						split_result_html+='</div>';
+					}
+				}
 				split_result_html+='</div>';
+				
 				$.confirm({
 					title: "分錢結果",
 					columnClass: "large",
