@@ -809,7 +809,6 @@
 			
 			// 建立帳目Table
 			function expense_add(expense_detail){
-				console.log(expense_detail);
 				
 				// 取得帳目資訊
 				let expense_description=expense_detail.expense_description;
@@ -823,18 +822,6 @@
 				let pay_description=expense_detail.pay_description;
 				let pay_payer=expense_detail.pay_payer;
 				let pay_charge=expense_detail.pay_charge;
-				
-				/*
-				console.log(expense_description);
-				console.log(expense_type_select);
-				console.log(expense_charge);
-				console.log(consumption_description);
-				console.log(consumption_consumer);
-				console.log(consumption_charge);
-				console.log(pay_description);
-				console.log(pay_payer);
-				console.log(pay_charge);
-				*/
 				
 				// 設定新增帳目之消費html
 				let expense_consumption_add_html="";
@@ -871,7 +858,7 @@
 						'<tbody>'+
 							'<tr class="expense_table_main">'+
 								'<th scope="col" style="vertical-align:middle">'+(name_index+1)+'</th>'+
-								'<td scope="col" style="vertical-align:middle;text-align:">'+expense_description+'</td>'+
+								'<td scope="col" style="vertical-align:middle;">'+expense_description+'</td>'+
 								'<td scope="col" style="vertical-align:middle;text-align:right;">'+expense_charge+' 元</td>'+
 								'<td scope="col" style="vertical-align:middle;text-align:center;">'+expense_type_select+'</td>'+
 								'<td scope="col" style="text-align:center">'+
@@ -892,7 +879,7 @@
 							'<tbody>'+
 								'<tr class="expense_table_main">'+
 									'<th scope="col" style="vertical-align:middle">1</th>'+
-									'<td scope="col" style="vertical-align:middle;text-align:">'+expense_description+'</td>'+
+									'<td scope="col" style="vertical-align:middle;">'+expense_description+'</td>'+
 									'<td scope="col" style="vertical-align:middle;text-align:right;">'+expense_charge+' 元</td>'+
 									'<td scope="col" style="vertical-align:middle;text-align:center;">'+expense_type_select+'</td>'+
 									'<td scope="col" style="text-align:center">'+
@@ -1412,7 +1399,7 @@
 				edited_expense_table.append(''+
 					'<tr class="expense_table_main">'+
 						'<th scope="col" style="vertical-align:middle">'+(name_index+1)+'</th>'+
-						'<td scope="col" style="vertical-align:middle;text-align:">'+expense_description+'</td>'+
+						'<td scope="col" style="vertical-align:middle;">'+expense_description+'</td>'+
 						'<td scope="col" style="vertical-align:middle;text-align:right;">'+expense_charge+' 元</td>'+
 						'<td scope="col" style="vertical-align:middle;text-align:center;">'+expense_type_select+'</td>'+
 						'<td scope="col" style="text-align:center">'+
@@ -1533,7 +1520,16 @@
 										return false;
 									}
 									
+									// 建立條件物件
+									let split_condition_detail={
+										split_condition_type: $(".jconfirm .btn-group input[name=btnradio]:checked").val(),
+										former_name: former_name,
+										latter_name: latter_name,
+										condition_amount: condition_amount
+									}
+									
 									// 建立條件Table
+									split_condition_add(split_condition_detail);
 								}
 							},
 							cancelBtn: {
@@ -1613,6 +1609,80 @@
 						}
 					});
 				});
+			}
+			
+			// 建立條件Table
+			function split_condition_add(split_condition_detail){
+				console.log(split_condition_detail);
+				
+				// 取得必要資訊
+				let split_condition_type=split_condition_detail.split_condition_type;
+				let former_name=split_condition_detail.former_name;
+				let latter_name=split_condition_detail.latter_name;
+				let condition_amount=split_condition_detail.condition_amount;
+				
+				// 建立條件html
+				let split_condition_html="";
+				if(split_condition_type=="paid_debt"){
+					split_condition_html+='<b>'+former_name+'</b>';
+					split_condition_html+=' 已還 ';
+					split_condition_html+='<b>'+latter_name+'</b>';
+					split_condition_html+='<font color="red"> '+condition_amount+' </font>';
+					split_condition_html+='元';
+				}
+				else if(split_condition_type=="pay_for"){
+					split_condition_html+='<b>'+former_name+'</b>';
+					split_condition_html+=' 代替 ';
+					split_condition_html+='<b>'+latter_name+'</b>';
+					split_condition_html+=' 還 ';
+					split_condition_html+='<font color="red"> '+condition_amount+' </font>';
+					split_condition_html+='元';
+				}
+				else if(split_condition_type=="take_for"){
+					split_condition_html+='<b>'+former_name+'</b>';
+					split_condition_html+=' 代替 ';
+					split_condition_html+='<b>'+latter_name+'</b>';
+					split_condition_html+=' 收 ';
+					split_condition_html+='<font color="red"> '+condition_amount+' </font>';
+					split_condition_html+='元';
+				}
+				else if(split_condition_type=="merge_debt"){
+					split_condition_html+='<b>'+former_name+'</b>';
+					split_condition_html+=' 要還 ';
+					split_condition_html+='<b>'+latter_name+'</b>';
+					split_condition_html+='<font color="red"> '+condition_amount+' </font>';
+					split_condition_html+='元';
+				}
+				
+				// 判斷是否為第一次添加帳目條件
+				if($("#split_condition_table").length){
+					let name_index=$(".form_split_condition tbody").length;
+					$(".form_split_condition table tbody").append(''+
+						'<tr class="split_condition_table_main">'+
+							'<th scope="col" style="vertical-align:middle">'+(name_index+1)+'</th>'+
+							'<td scope="col" style="vertical-align:middle;text-align:right;">'+split_condition_html+'</td>'+
+						'</tr>'
+					);
+				}
+				else{
+					$(".form_split_condition").append(''+
+						'<table id="split_condition_table" class="table table-hover table-bordered table-bg">'+
+							'<thead>'+
+								'<tr>'+
+									'<th scope="col" style="vertical-align:middle">#</th>'+
+									'<th scope="col" style="vertical-align:middle;"></th>'+
+								'</tr>'+
+							'</thead>'+
+							'<tbody>'+
+								'<tr class="split_condition_table_main">'+
+									'<th scope="col" style="vertical-align:middle">1</th>'+
+									'<td scope="col" style="vertical-align:middle;text-align:right">'+split_condition_html+'</td>'+
+								'</tr>'+
+							'</tbody>'+
+						'</table>'
+					);
+				}
+				$(".form_split_condition table tbody tr").data("split_condition_detail",split_condition_detail);
 			}
 			
 			// 帳目計算按鈕事件
@@ -1906,6 +1976,10 @@
 							<div class="row">
 								<div class="split_conditions_interface col-12">
 									<div class="row">
+										
+										<!-- 帳目明細 -->
+										<div class="col-12 form_split_condition">
+										</div>
 										
 										<!-- 新增分帳條件 -->
 										<div class="d-grid col-6 offset-3">
