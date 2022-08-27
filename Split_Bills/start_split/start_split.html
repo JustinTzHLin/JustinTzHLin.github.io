@@ -1792,7 +1792,7 @@
 				let split_result=split_process_array[1];
 				let split_result_html='<div class="container" style="text-align:center;">';
 				for(var i=0;i<split_result.length;i++){
-					split_result_html+='<div class="row">';
+					split_result_html+='<div class="row mb-3">';
 						split_result_html+='<div class="col-3">';
 							split_result_html+='<b>'+name_array[split_result[i][0]]+'</b>';
 						split_result_html+='</div>';
@@ -1811,6 +1811,7 @@
 				// 加入條件結果
 				if(condition_array.length){
 					for(var i=0;i<condition_array.length;i++){
+						split_result_html+='<div class="" style="font-weight:bold;text-align:left;font-size:18px;margin-left:-24px;">條件衍生債務</div>';
 						split_result_html+='<div class="row">';
 							split_result_html+='<div class="col-3">';
 								split_result_html+='<b>'+condition_array[i][0]+'</b>';
