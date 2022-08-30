@@ -74,7 +74,7 @@
 								action: function () {
 								
 									// 取得輸入名字
-									let name = $(".jconfirm").find("input").val();
+									let name=$(".jconfirm").find("input").val();
 									
 									// 若名字未輸入
 									if(!name){
@@ -89,6 +89,19 @@
 										$(".jconfirm").find("input").addClass("is-invalid");
 										return false;
 									}
+									
+									// 比對名字選項
+									let error_count=0;
+									$("#name_table tbody tr").each(function(index){
+										let name_now=$(this).find("td").first().text();
+										if(name==name_now){
+											$(".jconfirm").find(".invalid-feedback").html("&nbsp已存在相同名稱");
+											$(".jconfirm").find("input").addClass("is-invalid");
+											error_count+=1;
+											return false;
+										}
+									});
+									if(error_count){return false;}
 									
 									// 若輸入合法
 									$.alert({
@@ -129,6 +142,10 @@
 								jc.$$formSubmit.trigger('click'); // reference the button and click it
 							});
 							
+							// 輸入框focus事件
+							$(".jconfirm").find("input").click(function(){
+								$(this).removeClass("is-invalid");
+							});
 							
 							// 預覽輸入框
 							$(".jconfirm").find("input").focus();
@@ -300,6 +317,19 @@
 										return false;
 									}
 									
+									// 比對名字選項
+									let error_count=0;
+									$("#name_table tbody tr").each(function(index){
+										let name_now=$(this).find("td").first().text();
+										if(name==name_now){
+											$(".jconfirm").find(".invalid-feedback").html("&nbsp已存在相同名稱");
+											$(".jconfirm").find("input").addClass("is-invalid");
+											error_count+=1;
+											return false;
+										}
+									});
+									if(error_count){return false;}
+									
 									// 修改名字成功
 									edited_person.find("td").first().text(name);
 									$.alert({
@@ -327,6 +357,11 @@
 							}
 						},
 						onContentReady: function () {
+							
+							// 輸入框focus事件
+							$(".jconfirm").find("input").click(function(){
+								$(this).removeClass("is-invalid");
+							});
 							
 							// 預覽輸入框
 							$(".jconfirm").find("input").get(0).setSelectionRange(name.length, name.length);
@@ -360,7 +395,7 @@
 									text:"OK",
 									keys: ["esc","enter"],
 									action:	function(){
-										//$(".new_people_btn").focus();
+										$(".new_people_btn").click();
 									}
 								}
 							}
@@ -1547,7 +1582,9 @@
 			// 新增條件按鈕事件
 			function new_split_condition(){
 				$(".new_split_condition_btn").click(function(){
-					if($("#name_table tbody tr").length<=1){
+				
+					// 判斷是否已新增2位朋友
+					if($("#name_table tbody tr").length<2){
 						$.alert({
 							title: "",
 							type: "red",
@@ -1558,7 +1595,7 @@
 									text:"OK",
 									keys: ["esc","enter"],
 									action:	function(){
-										$(".new_people_btn").focus();
+										$(".new_people_btn").click();
 									}
 								}
 							}
@@ -1626,6 +1663,7 @@
 									}
 									if(!condition_amount.length){
 										$(".jconfirm .input-group input").addClass("is-invalid");
+										$(".jconfirm .input-group .invalid-feedback").html("&nbsp<b>條件金額</b> 請勿留白");
 										return false;
 									}
 									if(warning_text.length>0){
@@ -1654,8 +1692,25 @@
 										condition_amount: condition_amount
 									}
 									
-									// 建立條件Table
-									split_condition_add(split_condition_detail);
+									$.alert({
+										title: "",
+										type: "green",
+										content: "新增條件成功",
+										autoClose: 'okBtn|1',
+										buttons: {
+											okBtn: {
+												btnClass: "btn-green",
+												text:"OK",
+												keys: ["esc","enter"],
+												action:	function(){
+												
+													// 建立條件Table
+													split_condition_add(split_condition_detail);
+												}
+											}
+										}
+									});
+									
 								}
 							},
 							cancelBtn: {
@@ -1744,8 +1799,18 @@
 								}
 								$(".jconfirm .input-group").append(split_condition_html);
 								$(".jconfirm .input-group input").focus();
+								
+								// 輸入框focus事件
+								$(".jconfirm .input-group input").click(function(){
+									$(this).removeClass("is-invalid");
+								});
 							});
 							$(".jconfirm .input-group input").focus();
+							
+							// 輸入框focus事件
+							$(".jconfirm .input-group input").click(function(){
+								$(this).removeClass("is-invalid");
+							});
 						}
 					});
 				});
@@ -1823,8 +1888,244 @@
 					);
 				}
 				$(".form_split_condition table tbody tr").last().data("split_condition_detail",split_condition_detail);
+				
+				// 條件修改按鈕事件
+				split_condition_edit();
+			}
+			
+			// 條件修改按鈕事件
+			function split_condition_edit(){
 				$(".form_split_condition table tbody tr").last().click(function(){
-					alert("click");
+					
+					// 取得必要資訊
+					let split_condition_detail=$(this).data("split_condition_detail");
+					let split_condition_type=split_condition_detail.split_condition_type;
+					let former_name=split_condition_detail.former_name;
+					let latter_name=split_condition_detail.latter_name;
+					let condition_amount=split_condition_detail.condition_amount;
+					
+					console.log(split_condition_detail);
+					
+					// 獲得名字選項
+					let name_list="";
+					$("#name_table tbody tr").each(function(index){
+						let name_now=$(this).find("td").first().text();
+						name_list+='<option value="'+name_now+'">'+name_now+'</option>';
+					});
+					
+					// 彈出新增條件確認框
+					$.confirm({
+						title: "請選擇條件類型",
+						columnClass: "large",
+						content: ''+
+							'<div class="btn-group mb-3" role="group" aria-label="Basic radio toggle button group" style="display:flex;padding:5px;">'+
+								'<input type="radio" class="btn-check" name="btnradio" id="paid_debt" autocomplete="off" value="paid_debt" checked>'+
+								'<label class="btn btn-outline-dark" for="paid_debt" style="width:25%;">已還</label>'+
+
+								'<input type="radio" class="btn-check" name="btnradio" id="pay_for" autocomplete="off" value="pay_for">'+
+								'<label class="btn btn-outline-dark" for="pay_for" style="width:25%;">代付</label>'+
+
+								'<input type="radio" class="btn-check" name="btnradio" id="take_for" autocomplete="off" value="take_for">'+
+								'<label class="btn btn-outline-dark" for="take_for" style="width:25%;">代收</label>'+
+								
+								'<input type="radio" class="btn-check" name="btnradio" id="merge_debt" autocomplete="off" value="merge_debt">'+
+								'<label class="btn btn-outline-dark" for="merge_debt" style="width:25%;">合併債權</label>'+
+							'</div>'+
+							'<div class="input-group mb-1" style="padding-left:3px;padding-right:3px;">'+
+								/*
+								'<button class="btn" type="button" style="padding:0px;border:0px;">'+
+									'<select class="form-select paid_debt_payer" style="border-radius:0px;border-top-left-radius:0.25rem;border-bottom-left-radius:0.25rem;" aria-label="Default select example">'+
+										name_list+
+									'</select>'+
+								'</button>'+
+								'<span class="input-group-text">已經還</span>'+
+								'<button class="btn" type="button" style="padding:0px;border:0px;">'+
+									'<select class="form-select paid_debt_payer" style="border-radius:0px;" aria-label="Default select example">'+
+										name_list+
+									'</select>'+
+								'</button>'+
+								'<input type="number" placeholder="金額" style="text-align:right;" class="form-control paid_debt_amount" required/>'+
+								'<span class="input-group-text">TWD</span>'+
+								'<div class="invalid-feedback">'+
+									'&nbsp請勿留白'+
+								'</div>'+
+								*/
+							'</div>',
+						buttons: {
+							formSubmit: {
+								text: "確認",
+								btnClass: 'btn-blue',
+								keys: ['enter'],
+								action: function(){
+								
+									// 建立提示
+									let former_name=$(".jconfirm .input-group .form-select").eq(0).val();
+									let latter_name=$(".jconfirm .input-group .form-select").eq(1).val();
+									let condition_amount=$(".jconfirm .input-group input").val();
+									let warning_text="";
+									if(former_name==latter_name){
+										warning_text+="<b>雙方名字</b> 不可相同</div><div>";
+									}
+									if(!condition_amount.length){
+										$(".jconfirm .input-group input").addClass("is-invalid");
+										$(".jconfirm .input-group .invalid-feedback").html("&nbsp<b>條件金額</b> 請勿留白");
+										return false;
+									}
+									if(warning_text.length>0){
+										$.alert({
+											title: "",
+											type: "red",
+											content: warning_text,
+											buttons: {
+												okBtn: {
+													btnClass: "btn-red",
+													text:"OK",
+													keys: ["esc","enter"],
+													action:	function(){
+													}
+												}
+											}
+										});
+										return false;
+									}
+									
+									// 建立條件物件
+									let split_condition_detail={
+										split_condition_type: $(".jconfirm .btn-group input[name=btnradio]:checked").val(),
+										former_name: former_name,
+										latter_name: latter_name,
+										condition_amount: condition_amount
+									}
+									
+									$.alert({
+										title: "",
+										type: "green",
+										content: "修改條件成功",
+										autoClose: 'okBtn|1',
+										buttons: {
+											okBtn: {
+												btnClass: "btn-green",
+												text:"OK",
+												keys: ["esc","enter"],
+												action:	function(){
+												
+													// 建立條件Table
+													// split_condition_add(split_condition_detail);
+												}
+											}
+										}
+									});
+									
+								}
+							},
+							cancelBtn: {
+								text:"取消",
+								keys: ['esc'],
+								action:	function(){}
+							}
+						},
+						onContentReady: function () {
+							$(".jconfirm .btn-group input").change(function(){
+								$(".jconfirm .input-group").empty();
+								let split_condition_html="";
+								if($(".jconfirm .btn-group input[name=btnradio]:checked").val()=="paid_debt"){
+									split_condition_html+='<button class="btn" type="button" style="padding:0px;border:0px;">';
+										split_condition_html+='<select class="form-select paid_debt_payer" style="border-radius:0px;border-top-left-radius:0.25rem;border-bottom-left-radius:0.25rem;" aria-label="Default select example">';
+											split_condition_html+=name_list;
+										split_condition_html+='</select>';
+									split_condition_html+='</button>';
+									split_condition_html+='<span class="input-group-text">已經還</span>';
+									split_condition_html+='<button class="btn" type="button" style="padding:0px;border:0px;">';
+										split_condition_html+='<select class="form-select paid_debt_taker" style="border-radius:0px;" aria-label="Default select example">';
+											split_condition_html+=name_list;
+										split_condition_html+='</select>';
+									split_condition_html+='</button>';
+									split_condition_html+='<input type="number" placeholder="金額" style="text-align:right;" class="form-control paid_debt_amount" required/>';
+									split_condition_html+='<span class="input-group-text">TWD</span>';
+									split_condition_html+='<div class="invalid-feedback">';
+										split_condition_html+='&nbsp請勿留白';
+									split_condition_html+='</div>';
+								}
+								else if($(".jconfirm .btn-group input[name=btnradio]:checked").val()=="pay_for"){
+									split_condition_html+='<button class="btn" type="button" style="padding:0px;border:0px;">';
+										split_condition_html+='<select class="form-select pay_for_helper" style="border-radius:0px;border-top-left-radius:0.25rem;border-bottom-left-radius:0.25rem;" aria-label="Default select example">';
+											split_condition_html+=name_list;
+										split_condition_html+='</select>';
+									split_condition_html+='</button>';
+									split_condition_html+='<span class="input-group-text">代替</span>';
+									split_condition_html+='<button class="btn" type="button" style="padding:0px;border:0px;">';
+										split_condition_html+='<select class="form-select pay_for_helped" style="border-radius:0px;" aria-label="Default select example">';
+											split_condition_html+=name_list;
+										split_condition_html+='</select>';
+									split_condition_html+='</button>';
+									split_condition_html+='<span class="input-group-text">付</span>';
+									split_condition_html+='<input type="number" placeholder="金額" style="text-align:right;" class="form-control pay_for_amount" required/>';
+									split_condition_html+='<span class="input-group-text">TWD</span>';
+									split_condition_html+='<div class="invalid-feedback">';
+										split_condition_html+='&nbsp請勿留白';
+									split_condition_html+='</div>';
+								}
+								else if($(".jconfirm .btn-group input[name=btnradio]:checked").val()=="take_for"){
+									split_condition_html+='<button class="btn" type="button" style="padding:0px;border:0px;">';
+										split_condition_html+='<select class="form-select take_for_helper" style="border-radius:0px;border-top-left-radius:0.25rem;border-bottom-left-radius:0.25rem;" aria-label="Default select example">';
+											split_condition_html+=name_list;
+										split_condition_html+='</select>';
+									split_condition_html+='</button>';
+									split_condition_html+='<span class="input-group-text">代替</span>';
+									split_condition_html+='<button class="btn" type="button" style="padding:0px;border:0px;">';
+										split_condition_html+='<select class="form-select take_for_helped" style="border-radius:0px;" aria-label="Default select example">';
+											split_condition_html+=name_list;
+										split_condition_html+='</select>';
+									split_condition_html+='</button>';
+									split_condition_html+='<span class="input-group-text">收</span>';
+									split_condition_html+='<input type="number" placeholder="金額" style="text-align:right;" class="form-control take_for_amount" required/>';
+									split_condition_html+='<span class="input-group-text">TWD</span>';
+									split_condition_html+='<div class="invalid-feedback">';
+										split_condition_html+='&nbsp請勿留白';
+									split_condition_html+='</div>';
+								}
+								else if($(".jconfirm .btn-group input[name=btnradio]:checked").val()=="merge_debt"){
+									split_condition_html+='<button class="btn" type="button" style="padding:0px;border:0px;">';
+										split_condition_html+='<select class="form-select merge_debt_payer" style="border-radius:0px;border-top-left-radius:0.25rem;border-bottom-left-radius:0.25rem;" aria-label="Default select example">';
+											split_condition_html+=name_list;
+										split_condition_html+='</select>';
+									split_condition_html+='</button>';
+									split_condition_html+='<span class="input-group-text">要還</span>';
+									split_condition_html+='<button class="btn" type="button" style="padding:0px;border:0px;">';
+										split_condition_html+='<select class="form-select merge_debt_taker" style="border-radius:0px;" aria-label="Default select example">';
+											split_condition_html+=name_list;
+										split_condition_html+='</select>';
+									split_condition_html+='</button>';
+									split_condition_html+='<input type="number" placeholder="金額" style="text-align:right;" class="form-control merge_debt_amount" required/>';
+									split_condition_html+='<span class="input-group-text">TWD</span>';
+									split_condition_html+='<div class="invalid-feedback">';
+										split_condition_html+='&nbsp請勿留白';
+									split_condition_html+='</div>';
+								}
+								$(".jconfirm .input-group").append(split_condition_html);
+								$(".jconfirm .input-group input").focus();
+								
+								// 輸入框focus事件
+								$(".jconfirm .input-group input").click(function(){
+									$(this).removeClass("is-invalid");
+								});
+							});
+							$(".jconfirm .input-group input").focus();
+							
+							// 輸入框focus事件
+							$(".jconfirm .input-group input").click(function(){
+								$(this).removeClass("is-invalid");
+							});
+							
+							// 載入預設
+							$(".jconfirm .btn-group").find("#"+split_condition_type).prop("checked",true);
+							$(".jconfirm .btn-group input").change();
+							$(".jconfirm .input-group .form-select").eq(0).val(former_name);
+							$(".jconfirm .input-group .form-select").eq(1).val(latter_name);
+							$(".jconfirm .input-group input").val(condition_amount);
+							
+						}
+					});
 				});
 			}
 			
@@ -1881,9 +2182,9 @@
 				
 				// 加入分帳條件
 				let bills_after_apply=split_conditions_apply(bills_by_name);
-				//bills_by_name=JSON.parse(JSON.stringify(bills_after_apply[0]));
 				let condition_array=JSON.parse(JSON.stringify(bills_after_apply[1]));;
 				console.log(condition_array);
+				
 				// 取得簡易陣列
 				let bill_array=[];
 				$("#name_table tbody tr").each(function(index){
