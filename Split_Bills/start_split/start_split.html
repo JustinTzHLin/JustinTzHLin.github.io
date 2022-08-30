@@ -411,6 +411,9 @@
 											'<span class="input-group-text">TWD</span>'+
 											'<input type="text" placeholder="消費描述，選填" style="width:30%;" class="form-control consumption_description"/>'+
 											'<button class="bi bi-x consumer_delete_btn" type="button"></button>'+
+											'<div class="invalid-feedback">'+
+												'&nbsp請勿留白'+
+											'</div>'+
 										'</div>'+
 									'</div>'+
 									
@@ -428,6 +431,9 @@
 											'<span class="input-group-text">TWD</span>'+
 											'<input type="text" placeholder="付費描述，選填" style="width:30%;" class="form-control pay_description"/>'+
 											'<button class="bi bi-x payer_delete_btn" type="button"></button>'+
+											'<div class="invalid-feedback">'+
+												'&nbsp請勿留白'+
+											'</div>'+
 										'</div>'+
 									'</div>'+
 								'</div>'+
@@ -484,9 +490,6 @@
 									let consumption_consumer=[];
 									let consumption_charge=[];
 									if(expense_type_select=="personal"){
-										$(".jconfirm").find(".consumption_description").each(function(){
-											consumption_description.push($(this).val());
-										});
 										$(".jconfirm").find(".consumption_consumer").each(function(){
 											consumption_consumer.push($(this).val());
 										});
@@ -494,16 +497,21 @@
 											consumption_charge.push($(this).val());
 											if(!$(this).val()){
 												$(this).addClass("is-invalid");
+												$(this).parent().find(".invalid-feedback").html("&nbsp<b>消費金額</b> 請勿留白");
+												error_count+=1;
+											}
+										});
+										$(".jconfirm").find(".consumption_description").each(function(){
+											consumption_description.push($(this).val());
+											if($(this).val().length>20){
+												$(this).addClass("is-invalid");
+												$(this).parent().find(".invalid-feedback").html($(this).parent().find(".invalid-feedback").html()+"｜<b>消費描述</b> 請輸入20字以內");
 												error_count+=1;
 											}
 										});
 									}
 									
 									// 取得付費資訊
-									let pay_description=[];
-									$(".jconfirm").find(".pay_description").each(function(){
-										pay_description.push($(this).val());
-									});
 									let pay_payer=[];
 									$(".jconfirm").find(".pay_payer").each(function(){
 										pay_payer.push($(this).val());
@@ -513,6 +521,16 @@
 										pay_charge.push($(this).val());
 										if(!$(this).val()){
 											$(this).addClass("is-invalid");
+											$(this).parent().find(".invalid-feedback").html("&nbsp<b>付費金額</b> 請勿留白");
+											error_count+=1;
+										}
+									});
+									let pay_description=[];
+									$(".jconfirm").find(".pay_description").each(function(){
+										pay_description.push($(this).val());
+										if($(this).val().length>20){
+											$(this).addClass("is-invalid");
+											$(this).parent().find(".invalid-feedback").html($(this).parent().find(".invalid-feedback").html()+"｜<b>付費描述</b> 請輸入20字以內");
 											error_count+=1;
 										}
 									});
@@ -532,26 +550,10 @@
 									
 									// 檢查各輸入
 									let warning_text="";
-									if(!expense_description){
-										warning_text+="<b>帳目名稱</b> 請勿留白</div><div>";
-									}
-									else if(expense_description.length>=20){
-										warning_text+="<b>帳目名稱</b> 請輸入20字以內</div><div>";
-									}
-									if(!expense_charge){
-										warning_text+="<b>帳目金額</b> 請勿留白</div><div>";
-									}
 									if(expense_type_select=="personal"){
-										for(var i=0;i<consumption_description.length;i++){
-											if(consumption_description[i].length>20){
-												warning_text+="<b>消費敘述</b> 請輸入20字以內</div><div>";
-												break;
-											}
-										}
 										var consumption_sum=0;
 										for(var i=0;i<consumption_charge.length;i++){
 											if(!consumption_charge[i]){
-												warning_text+="<b>消費金額</b> 請勿留白</div><div>";
 												break;
 											}
 											consumption_sum+=Number(consumption_charge[i]);
@@ -562,16 +564,9 @@
 											}
 										}
 									}
-									for(var i=0;i<pay_description.length;i++){
-										if(pay_description[i].length>20){
-											warning_text+="<b>付費敘述</b> 請輸入20字以內</div><div>";
-											break;
-										}
-									}
 									var pay_sum=0;
 									for(var i=0;i<pay_charge.length;i++){
 										if(!pay_charge[i]){
-											warning_text+="<b>付費金額</b> 請勿留白</div><div>";
 											break;
 										}
 										pay_sum+=Number(pay_charge[i]);
@@ -596,6 +591,9 @@
 												}
 											}
 										});
+										return false;
+									}
+									if(error_count>0){
 										return false;
 									}
 									
@@ -639,6 +637,11 @@
 							// 付費者刪除按鈕事件
 							payer_delete();
 							
+							// 輸入框focus事件
+							$(".jconfirm input").click(function(){
+								$(this).removeClass("is-invalid");
+							});
+							
 							// 預覽輸入框
 							$(".jconfirm").find("input").first().focus();
 							
@@ -655,10 +658,18 @@
 										'<span class="input-group-text">TWD</span>'+
 										'<input type="text" placeholder="消費描述，選填" style="width:30%;" class="form-control consumption_description"/>'+
 										'<button class="bi bi-x consumer_delete_btn" type="button"></button>'+
+										'<div class="invalid-feedback">'+
+											'&nbsp請勿留白'+
+										'</div>'+
 									'</div>';
 								$(".jconfirm #consumer_overview").find(".input-group").last().removeClass("mb-3");
 								$(".jconfirm #consumer_overview").find(".input-group").last().addClass("mb-0");
 								$(".jconfirm #consumer_overview").append(consumer_add_html);
+								$(".jconfirm #consumer_overview").find(".input-group").last().find("input").each(function(){
+									$(this).click(function(){
+										$(this).removeClass("is-invalid");
+									});
+								});
 								
 								// 消費者刪除按鈕事件
 								consumer_delete();
@@ -677,10 +688,18 @@
 										'<span class="input-group-text">TWD</span>'+
 										'<input type="text" placeholder="付費描述，選填" style="width:30%;" class="form-control pay_description"/>'+
 										'<button class="bi bi-x payer_delete_btn" type="button"></button>'+
+										'<div class="invalid-feedback">'+
+											'&nbsp請勿留白'+
+										'</div>'+
 									'</div>';
 								$(".jconfirm #payer_overview").find(".input-group").last().removeClass("mb-1");
 								$(".jconfirm #payer_overview").find(".input-group").last().addClass("mb-0");
 								$(".jconfirm #payer_overview").append(payer_add_html);
+								$(".jconfirm #payer_overview").find(".input-group").last().find("input").each(function(){
+									$(this).click(function(){
+										$(this).removeClass("is-invalid");
+									});
+								});
 								
 								// 付費者刪除按鈕事件
 								payer_delete();
@@ -1070,6 +1089,9 @@
 									expense_edit_consumer_html+='<span class="input-group-text">TWD</span>';
 									expense_edit_consumer_html+='<input type="text" placeholder="消費描述，選填" style="width:30%;" class="form-control consumption_description" value="'+expense_detail.consumption_description[i]+'" required/>';
 									expense_edit_consumer_html+='<button class="bi bi-x consumer_delete_btn" type="button"></button>';
+									expense_edit_consumer_html+='<div class="invalid-feedback">';
+										expense_edit_consumer_html+='&nbsp請勿留白';
+									expense_edit_consumer_html+='</div>';
 								expense_edit_consumer_html+='</div>';
 						}
 					}
@@ -1093,6 +1115,9 @@
 							expense_edit_consumer_html+='<span class="input-group-text">TWD</span>';
 							expense_edit_consumer_html+='<input type="text" placeholder="消費描述，選填" style="width:30%;" class="form-control consumption_description" required/>';
 							expense_edit_consumer_html+='<button class="bi bi-x consumer_delete_btn" type="button"></button>';
+							expense_edit_consumer_html+='<div class="invalid-feedback">';
+								expense_edit_consumer_html+='&nbsp請勿留白';
+							expense_edit_consumer_html+='</div>';
 						expense_edit_consumer_html+='</div>';
 					}
 					
@@ -1100,7 +1125,7 @@
 					let expense_edit_payer_html="";
 					for(var i=0;i<expense_detail.pay_description.length;i++){
 						
-						// 取得消費者選項
+						// 取得付費者選項
 						let name_list_payer="";
 						$("#name_table tbody tr").each(function(index){
 							let name_now=$(this).find("td").first().text();
@@ -1128,6 +1153,9 @@
 								expense_edit_payer_html+='<span class="input-group-text">TWD</span>';
 								expense_edit_payer_html+='<input type="text" placeholder="付費描述，選填" style="width:30%;" class="form-control pay_description" value="'+expense_detail.pay_description[i]+'" required/>';
 								expense_edit_payer_html+='<button class="bi bi-x payer_delete_btn" type="button"></button>';
+								expense_edit_consumer_html+='<div class="invalid-feedback">';
+									expense_edit_consumer_html+='&nbsp請勿留白';
+								expense_edit_consumer_html+='</div>';
 							expense_edit_payer_html+='</div>';
 					}
 					
@@ -1144,6 +1172,9 @@
 										'<input type="text" placeholder="帳目名稱" style="width:35%;" class="form-control expense_description" value="'+expense_detail.expense_description+'" required/>'+
 										'<input type="number" placeholder="總金額" style="text-align:right;" class="form-control expense_charge" value="'+expense_detail.expense_charge+'" required/>'+
 										'<span class="input-group-text">TWD</span>'+
+										'<div class="invalid-feedback">'+
+											'&nbsp請勿留白'+
+										'</div>'+
 									'</div>'+
 									
 									// 消費者
@@ -1175,6 +1206,7 @@
 								action: function () {
 									
 									// 取得帳目資訊
+									let error_count=0;
 									let expense_description=$(".jconfirm").find(".expense_description").val();
 									let expense_type_select="personal";
 									if($(".jconfirm .expense_type_select").prop("checked")){
@@ -1182,27 +1214,62 @@
 									}
 									let expense_charge=$(".jconfirm").find(".expense_charge").val();
 									
+									// 進行帳目輸入檢查
+									if(!expense_description){
+										$(".jconfirm").find(".expense_description").addClass("is-invalid");
+										$("#expense_overview .invalid-feedback").html("&nbsp<b>帳目名稱</b> 請勿留白");
+										error_count+=1;
+										if(!expense_charge){
+											$(".jconfirm").find(".expense_charge").addClass("is-invalid");
+											$("#expense_overview .invalid-feedback").html("&nbsp<b>帳目名稱、總金額</b> 請勿留白");
+											error_count+=1;
+										}
+									}
+									else if(expense_description.length>20){
+										$(".jconfirm").find(".expense_description").addClass("is-invalid");
+										$("#expense_overview .invalid-feedback").html("&nbsp<b>帳目名稱</b> 請勿超過20字");
+										error_count+=1;
+										if(!expense_charge){
+											$(".jconfirm").find(".expense_charge").addClass("is-invalid");
+											$("#expense_overview .invalid-feedback").html("&nbsp<b>帳目名稱</b> 請勿超過20字｜<b>帳目總金額</b> 請勿留白");
+											error_count+=1;
+										}
+									}
+									else if(!expense_charge){
+										if(!expense_charge){
+											$(".jconfirm").find(".expense_charge").addClass("is-invalid");
+											$("#expense_overview .invalid-feedback").html("&nbsp<b>帳目總金額</b> 請勿留白");
+											error_count+=1;
+										}
+									}
+								
 									// 取得消費資訊
 									let consumption_description=[];
 									let consumption_consumer=[];
 									let consumption_charge=[];
 									if(expense_type_select=="personal"){
-										$(".jconfirm").find(".consumption_description").each(function(){
-											consumption_description.push($(this).val());
-										});
 										$(".jconfirm").find(".consumption_consumer").each(function(){
 											consumption_consumer.push($(this).val());
 										});
 										$(".jconfirm").find(".consumption_charge").each(function(){
 											consumption_charge.push($(this).val());
+											if(!$(this).val()){
+												$(this).addClass("is-invalid");
+												$(this).parent().find(".invalid-feedback").html("&nbsp<b>消費金額</b> 請勿留白");
+												error_count+=1;
+											}
+										});
+										$(".jconfirm").find(".consumption_description").each(function(){
+											consumption_description.push($(this).val());
+											if($(this).val().length>20){
+												$(this).addClass("is-invalid");
+												$(this).parent().find(".invalid-feedback").html($(this).parent().find(".invalid-feedback").html()+"｜<b>消費描述</b> 請輸入20字以內");
+												error_count+=1;
+											}
 										});
 									}
 									
 									// 取得付費資訊
-									let pay_description=[];
-									$(".jconfirm").find(".pay_description").each(function(){
-										pay_description.push($(this).val());
-									});
 									let pay_payer=[];
 									$(".jconfirm").find(".pay_payer").each(function(){
 										pay_payer.push($(this).val());
@@ -1210,6 +1277,20 @@
 									let pay_charge=[];
 									$(".jconfirm").find(".pay_charge").each(function(){
 										pay_charge.push($(this).val());
+										if(!$(this).val()){
+											$(this).addClass("is-invalid");
+											$(this).parent().find(".invalid-feedback").html("&nbsp<b>付費金額</b> 請勿留白");
+											error_count+=1;
+										}
+									});
+									let pay_description=[];
+									$(".jconfirm").find(".pay_description").each(function(){
+										pay_description.push($(this).val());
+										if($(this).val().length>20){
+											$(this).addClass("is-invalid");
+											$(this).parent().find(".invalid-feedback").html($(this).parent().find(".invalid-feedback").html()+"｜<b>付費描述</b> 請輸入20字以內");
+											error_count+=1;
+										}
 									});
 									
 									// 建立帳目物件
@@ -1227,26 +1308,10 @@
 									
 									// 檢查各輸入
 									let warning_text="";
-									if(!expense_description){
-										warning_text+="<b>帳目名稱</b> 請勿留白</div><div>";
-									}
-									else if(expense_description.length>=20){
-										warning_text+="<b>帳目名稱</b> 請輸入20字以內</div><div>";
-									}
-									if(!expense_charge){
-										warning_text+="<b>帳目金額</b> 請勿留白</div><div>";
-									}
 									if(expense_type_select=="personal"){
-										for(var i=0;i<consumption_description.length;i++){
-											if(consumption_description[i].length>20){
-												warning_text+="<b>消費敘述</b> 請輸入20字以內</div><div>";
-												break;
-											}
-										}
 										var consumption_sum=0;
 										for(var i=0;i<consumption_charge.length;i++){
 											if(!consumption_charge[i]){
-												warning_text+="<b>消費金額</b> 請勿留白</div><div>";
 												break;
 											}
 											consumption_sum+=Number(consumption_charge[i]);
@@ -1257,16 +1322,9 @@
 											}
 										}
 									}
-									for(var i=0;i<pay_description.length;i++){
-										if(pay_description[i].length>20){
-											warning_text+="<b>付費敘述</b> 請輸入20字以內</div><div>";
-											break;
-										}
-									}
 									var pay_sum=0;
 									for(var i=0;i<pay_charge.length;i++){
 										if(!pay_charge[i]){
-											warning_text+="<b>付費金額</b> 請勿留白</div><div>";
 											break;
 										}
 										pay_sum+=Number(pay_charge[i]);
@@ -1291,6 +1349,9 @@
 												}
 											}
 										});
+										return false;
+									}
+									if(error_count>0){
 										return false;
 									}
 									
@@ -1334,6 +1395,11 @@
 							// 付費者刪除按鈕事件
 							payer_delete();
 							
+							// 輸入框focus事件
+							$(".jconfirm input").click(function(){
+								$(this).removeClass("is-invalid");
+							});
+							
 							// 預覽輸入框
 							$(".jconfirm").find("input").first().focus();
 							
@@ -1350,10 +1416,18 @@
 										'<span class="input-group-text">TWD</span>'+
 										'<input type="text" placeholder="消費描述，選填" style="width:30%;" class="form-control consumption_description" required/>'+
 										'<button class="bi bi-x consumer_delete_btn" type="button"></button>'+
+										'<div class="invalid-feedback">'+
+											'&nbsp請勿留白'+
+										'</div>'+
 									'</div>';
 								$(".jconfirm #consumer_overview").find(".input-group").last().removeClass("mb-3");
 								$(".jconfirm #consumer_overview").find(".input-group").last().addClass("mb-0");
 								$(".jconfirm #consumer_overview").append(consumer_add_html);
+								$(".jconfirm #consumer_overview").find(".input-group").last().find("input").each(function(){
+									$(this).click(function(){
+										$(this).removeClass("is-invalid");
+									});
+								});
 								
 								// 消費者刪除按鈕事件
 								consumer_delete();
@@ -1372,10 +1446,18 @@
 										'<span class="input-group-text">TWD</span>'+
 										'<input type="text" placeholder="付費描述，選填" style="width:30%;" class="form-control pay_description" required/>'+
 										'<button class="bi bi-x payer_delete_btn" type="button"></button>'+
+										'<div class="invalid-feedback">'+
+											'&nbsp請勿留白'+
+										'</div>'+
 									'</div>';
 								$(".jconfirm #payer_overview").find(".input-group").last().removeClass("mb-1");
 								$(".jconfirm #payer_overview").find(".input-group").last().addClass("mb-0");
 								$(".jconfirm #payer_overview").append(payer_add_html);
+								$(".jconfirm #payer_overview").find(".input-group").last().find("input").each(function(){
+									$(this).click(function(){
+										$(this).removeClass("is-invalid");
+									});
+								});
 								
 								// 付費者刪除按鈕事件
 								payer_delete();
@@ -1523,6 +1605,9 @@
 								'</button>'+
 								'<input type="number" placeholder="金額" style="text-align:right;" class="form-control paid_debt_amount" required/>'+
 								'<span class="input-group-text">TWD</span>'+
+								'<div class="invalid-feedback">'+
+									'&nbsp請勿留白'+
+								'</div>'+
 							'</div>',
 						buttons: {
 							formSubmit: {
@@ -1540,7 +1625,8 @@
 										warning_text+="<b>雙方名字</b> 不可相同</div><div>";
 									}
 									if(!condition_amount.length){
-										warning_text+="<b>條件金額</b> 請勿留白</div><div>";
+										$(".jconfirm .input-group input").addClass("is-invalid");
+										return false;
 									}
 									if(warning_text.length>0){
 										$.alert({
@@ -1596,6 +1682,9 @@
 									split_condition_html+='</button>';
 									split_condition_html+='<input type="number" placeholder="金額" style="text-align:right;" class="form-control paid_debt_amount" required/>';
 									split_condition_html+='<span class="input-group-text">TWD</span>';
+									split_condition_html+='<div class="invalid-feedback">';
+										split_condition_html+='&nbsp請勿留白';
+									split_condition_html+='</div>';
 								}
 								else if($(".jconfirm .btn-group input[name=btnradio]:checked").val()=="pay_for"){
 									split_condition_html+='<button class="btn" type="button" style="padding:0px;border:0px;">';
@@ -1612,6 +1701,9 @@
 									split_condition_html+='<span class="input-group-text">付</span>';
 									split_condition_html+='<input type="number" placeholder="金額" style="text-align:right;" class="form-control pay_for_amount" required/>';
 									split_condition_html+='<span class="input-group-text">TWD</span>';
+									split_condition_html+='<div class="invalid-feedback">';
+										split_condition_html+='&nbsp請勿留白';
+									split_condition_html+='</div>';
 								}
 								else if($(".jconfirm .btn-group input[name=btnradio]:checked").val()=="take_for"){
 									split_condition_html+='<button class="btn" type="button" style="padding:0px;border:0px;">';
@@ -1628,6 +1720,9 @@
 									split_condition_html+='<span class="input-group-text">收</span>';
 									split_condition_html+='<input type="number" placeholder="金額" style="text-align:right;" class="form-control take_for_amount" required/>';
 									split_condition_html+='<span class="input-group-text">TWD</span>';
+									split_condition_html+='<div class="invalid-feedback">';
+										split_condition_html+='&nbsp請勿留白';
+									split_condition_html+='</div>';
 								}
 								else if($(".jconfirm .btn-group input[name=btnradio]:checked").val()=="merge_debt"){
 									split_condition_html+='<button class="btn" type="button" style="padding:0px;border:0px;">';
@@ -1643,6 +1738,9 @@
 									split_condition_html+='</button>';
 									split_condition_html+='<input type="number" placeholder="金額" style="text-align:right;" class="form-control merge_debt_amount" required/>';
 									split_condition_html+='<span class="input-group-text">TWD</span>';
+									split_condition_html+='<div class="invalid-feedback">';
+										split_condition_html+='&nbsp請勿留白';
+									split_condition_html+='</div>';
 								}
 								$(".jconfirm .input-group").append(split_condition_html);
 								$(".jconfirm .input-group input").focus();
