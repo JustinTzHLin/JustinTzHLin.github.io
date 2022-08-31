@@ -997,24 +997,31 @@
 				}
 				$(".expense_table_main").children().css("--bs-table-accent-bg","var(--bs-table-striped-bg)");
 				
+				// 設定資訊
+				$(".form_expense table tbody").last().data("expense_detail",expense_detail);
+				
 				// 帳目刪除按鈕事件
-				expense_delete();
+				expense_delete("last");
 				
 				// 帳目修改按鈕事件
-				expense_edit();
+				expense_edit("last");
 				
 				// 帳目計算按鈕是否顯現
 				hide_bills_compute_btn();
-				
-				// 設定資訊
-				$(".form_expense table tbody").last().data("expense_detail",expense_detail);
 			}
 			
 			// 帳目刪除按鈕事件
-			function expense_delete(){
+			function expense_delete(expense_delete_instruction){
+				let expense_delete_target="";
+				if(expense_delete_instruction==="last"){
+					expense_delete_target=$("#expense_table tbody").last();
+				}
+				else{
+					expense_delete_target=expense_delete_instruction;
+				}
 				
 				// 僅設定最後新增的那行按鍵
-				$("#expense_table tbody").last().find(".expense_delete_button").click(function(){
+				expense_delete_target.find(".expense_delete_button").click(function(){
 					
 					// 取得必要資訊
 					let deleted_expense=$(this).parent().parent().parent();
@@ -1069,8 +1076,15 @@
 			}
 			
 			// 帳目修改按鈕事件
-			function expense_edit(){
-				$("#expense_table tbody").last().find(".expense_edit_button").click(function(){
+			function expense_edit(expense_edit_instruction){
+				let expense_edit_target="";
+				if(expense_edit_instruction==="last"){
+					expense_edit_target=$("#expense_table tbody").last();
+				}
+				else{
+					expense_edit_target=expense_edit_instruction;
+				}
+				expense_edit_target.find(".expense_edit_button").click(function(){
 					
 					// 取得該筆帳目資訊
 					let expense_detail=$(this).parent().parent().parent().data("expense_detail");
@@ -1569,14 +1583,14 @@
 				);
 				$(".expense_table_main").children().css("--bs-table-accent-bg","var(--bs-table-striped-bg)");
 				
-				// 帳目刪除按鈕事件
-				expense_delete();
-				
-				// 帳目修改按鈕事件
-				expense_edit();
-				
 				// 設定資訊
 				edited_expense_table.data("expense_detail",expense_detail);
+				
+				// 帳目刪除按鈕事件
+				expense_delete(edited_expense_table);
+				
+				// 帳目修改按鈕事件
+				expense_edit(edited_expense_table);
 			}
 			
 			// 新增條件按鈕事件
@@ -1890,12 +1904,20 @@
 				$(".form_split_condition table tbody tr").last().data("split_condition_detail",split_condition_detail);
 				
 				// 條件修改按鈕事件
-				split_condition_edit();
+				split_condition_edit("last");
 			}
 			
 			// 條件修改按鈕事件
-			function split_condition_edit(){
-				$(".form_split_condition table tbody tr").last().click(function(){
+			function split_condition_edit(split_condition_edit_instruction){
+				let split_condition_edit_target="";
+				if(split_condition_edit_instruction==="last"){
+					split_condition_edit_target=$(".form_split_condition table tbody tr").last();
+				}
+				else{
+					split_condition_edit_target=split_condition_edit_instruction
+				}
+				
+				split_condition_edit_target.click(function(){
 					
 					// 取得必要資訊
 					let split_condition_detail=$(this).data("split_condition_detail");
@@ -1903,6 +1925,7 @@
 					let former_name=split_condition_detail.former_name;
 					let latter_name=split_condition_detail.latter_name;
 					let condition_amount=split_condition_detail.condition_amount;
+					let edited_split_condition_table=$(this);
 					
 					console.log(split_condition_detail);
 					
@@ -1913,9 +1936,9 @@
 						name_list+='<option value="'+name_now+'">'+name_now+'</option>';
 					});
 					
-					// 彈出新增條件確認框
+					// 彈出修改條件確認框
 					$.confirm({
-						title: "請選擇條件類型",
+						title: "修改條件",
 						columnClass: "large",
 						content: ''+
 							'<div class="btn-group mb-3" role="group" aria-label="Basic radio toggle button group" style="display:flex;padding:5px;">'+
@@ -2009,8 +2032,8 @@
 												keys: ["esc","enter"],
 												action:	function(){
 												
-													// 建立條件Table
-													// split_condition_add(split_condition_detail);
+													// 修改條件Table
+													split_condition_edit_table_change(split_condition_detail,edited_split_condition_table);
 												}
 											}
 										}
@@ -2025,6 +2048,9 @@
 							}
 						},
 						onContentReady: function () {
+							$(".jconfirm .input-group input").focus();
+						},
+						onOpenBefore: function () {
 							$(".jconfirm .btn-group input").change(function(){
 								$(".jconfirm .input-group").empty();
 								let split_condition_html="";
@@ -2110,7 +2136,6 @@
 									$(this).removeClass("is-invalid");
 								});
 							});
-							$(".jconfirm .input-group input").focus();
 							
 							// 輸入框focus事件
 							$(".jconfirm .input-group input").click(function(){
@@ -2123,10 +2148,70 @@
 							$(".jconfirm .input-group .form-select").eq(0).val(former_name);
 							$(".jconfirm .input-group .form-select").eq(1).val(latter_name);
 							$(".jconfirm .input-group input").val(condition_amount);
-							
 						}
 					});
 				});
+			}
+			
+			// 修改條件Table
+			function split_condition_edit_table_change(split_condition_detail,edited_split_condition_table){
+				
+				// 取得必要資訊
+				let split_condition_type=split_condition_detail.split_condition_type;
+				let former_name=split_condition_detail.former_name;
+				let latter_name=split_condition_detail.latter_name;
+				let condition_amount=split_condition_detail.condition_amount;
+				console.log(split_condition_detail);
+				
+				// 清空修改該條件
+				edited_split_condition_table.find("td").remove();
+				
+				// 建立條件html
+				let split_condition_html="";
+				if(split_condition_type=="paid_debt"){
+					split_condition_html+='<b>'+former_name+'</b>';
+					split_condition_html+=' 已還 ';
+					split_condition_html+='<b>'+latter_name+'</b>';
+					split_condition_html+='<font color="red"> '+condition_amount+' </font>';
+					split_condition_html+='元';
+				}
+				else if(split_condition_type=="pay_for"){
+					split_condition_html+='<b>'+former_name+'</b>';
+					split_condition_html+=' 代替 ';
+					split_condition_html+='<b>'+latter_name+'</b>';
+					split_condition_html+=' 還 ';
+					split_condition_html+='<font color="red"> '+condition_amount+' </font>';
+					split_condition_html+='元';
+				}
+				else if(split_condition_type=="take_for"){
+					split_condition_html+='<b>'+former_name+'</b>';
+					split_condition_html+=' 代替 ';
+					split_condition_html+='<b>'+latter_name+'</b>';
+					split_condition_html+=' 收 ';
+					split_condition_html+='<font color="red"> '+condition_amount+' </font>';
+					split_condition_html+='元';
+				}
+				else if(split_condition_type=="merge_debt"){
+					split_condition_html+='<b>'+former_name+'</b>';
+					split_condition_html+=' 要還 ';
+					split_condition_html+='<b>'+latter_name+'</b>';
+					split_condition_html+='<font color="red"> '+condition_amount+' </font>';
+					split_condition_html+='元';
+				}
+				
+				// 判斷是否為第一次添加帳目條件
+				if($("#split_condition_table").length){
+					edited_split_condition_table.append(''+
+						'<td scope="col" style="vertical-align:middle;text-align:right;">'+
+							split_condition_html+
+						'</td>'
+					);
+				}
+				edited_split_condition_table.data("split_condition_detail",split_condition_detail);
+				
+				// 條件修改按鈕事件
+				edited_split_condition_table.off("click");
+				split_condition_edit(edited_split_condition_table);
 			}
 			
 			// 帳目計算按鈕事件
