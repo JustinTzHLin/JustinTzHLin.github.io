@@ -1735,6 +1735,12 @@
 						},
 						onContentReady: function () {
 							$(".jconfirm .btn-group input").change(function(){
+							
+								// 取得目前值
+								let former_name_now=$(".jconfirm .input-group .form-select").eq(0).val();
+								let latter_name_now=$(".jconfirm .input-group .form-select").eq(1).val();
+								let condition_amount_now=$(".jconfirm .input-group input").val();
+								
 								$(".jconfirm .input-group").empty();
 								let split_condition_html="";
 								if($(".jconfirm .btn-group input[name=btnradio]:checked").val()=="paid_debt"){
@@ -1812,6 +1818,9 @@
 									split_condition_html+='</div>';
 								}
 								$(".jconfirm .input-group").append(split_condition_html);
+								$(".jconfirm .input-group .form-select").eq(0).val(former_name_now);
+								$(".jconfirm .input-group .form-select").eq(1).val(latter_name_now);
+								$(".jconfirm .input-group input").val(condition_amount_now);
 								$(".jconfirm .input-group input").focus();
 								
 								// 輸入框focus事件
@@ -1853,7 +1862,7 @@
 					split_condition_html+='<b>'+former_name+'</b>';
 					split_condition_html+=' 代替 ';
 					split_condition_html+='<b>'+latter_name+'</b>';
-					split_condition_html+=' 還 ';
+					split_condition_html+=' 付 ';
 					split_condition_html+='<font color="red"> '+condition_amount+' </font>';
 					split_condition_html+='元';
 				}
@@ -2052,6 +2061,12 @@
 						},
 						onOpenBefore: function () {
 							$(".jconfirm .btn-group input").change(function(){
+							
+								// 取得目前值
+								let former_name_now=$(".jconfirm .input-group .form-select").eq(0).val();
+								let latter_name_now=$(".jconfirm .input-group .form-select").eq(1).val();
+								let condition_amount_now=$(".jconfirm .input-group input").val();
+								
 								$(".jconfirm .input-group").empty();
 								let split_condition_html="";
 								if($(".jconfirm .btn-group input[name=btnradio]:checked").val()=="paid_debt"){
@@ -2129,6 +2144,9 @@
 									split_condition_html+='</div>';
 								}
 								$(".jconfirm .input-group").append(split_condition_html);
+								$(".jconfirm .input-group .form-select").eq(0).val(former_name_now);
+								$(".jconfirm .input-group .form-select").eq(1).val(latter_name_now);
+								$(".jconfirm .input-group input").val(condition_amount_now);
 								$(".jconfirm .input-group input").focus();
 								
 								// 輸入框focus事件
