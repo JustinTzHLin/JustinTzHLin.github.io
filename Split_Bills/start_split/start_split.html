@@ -277,41 +277,46 @@
 					
 					// 取得必要資訊
 					let edited_person=$(this).parent().parent();
-					let name=$(this).parent().parent().find("td").first().text();
+					let name_origin=$(this).parent().parent().find("td").first().text();
 					
 					// 修改朋友名字視窗
 					$.confirm({
+						icon: 'bi bi-exclamation-triangle-fill',
 						title:"修改朋友名字：",
 						content:''+
-							'<form action="" class="formName">' +
+							'<div class="alert alert-warning" role="alert" style="padding:0.5rem 0.5rem;">'+
+								' 將同步修改<b>帳目、分帳條件</b>的名字'+
+							'</div>'+
+							'<form action="" class="formName">'+
 								'<div class="input-group has-validation mb1">'+
-									'<input type="text" placeholder="請輸入名字" class="name form-control" style="margin:3px;" value="'+name+'"/>'+
+									'<input type="text" placeholder="請輸入名字" class="name form-control" style="margin:3px;" value="'+name_origin+'"/>'+
 									'<div class="invalid-feedback">'+
 										'&nbsp請勿留白'+
 									'</div>'+
 								'</div>'+
 							'</form>',
+						type:"orange",
 						buttons: {
 							
 							// 彈出修改名字確認框
 							formSubmit: {
 								text:"確定",
 								keys: ["enter"],
-								btnClass:"btn-blue",
+								btnClass:"btn-orange",
 								action: function () {
 								
 									// 取得修改後名字
-									let name = $(".jconfirm").find('input').val();
+									let name_new = $(".jconfirm").find('input').val();
 									
 									// 若名字未輸入
-									if(!name){
+									if(!name_new){
 										$(".jconfirm").find(".invalid-feedback").html("&nbsp請勿留白");
 										$(".jconfirm").find("input").addClass("is-invalid");
 										return false;
 									}
 									
 									// 若名字輸入超過10字
-									else if(name.length>10){
+									else if(name_new.length>10){
 										$(".jconfirm").find(".invalid-feedback").html("&nbsp請輸入十字以內");
 										$(".jconfirm").find("input").addClass("is-invalid");
 										return false;
@@ -320,8 +325,9 @@
 									// 比對名字選項
 									let error_count=0;
 									$("#name_table tbody tr").each(function(index){
+										if(name_new==name_origin){return false;}
 										let name_now=$(this).find("td").first().text();
-										if(name==name_now){
+										if(name_new==name_now){
 											$(".jconfirm").find(".invalid-feedback").html("&nbsp已存在相同名稱");
 											$(".jconfirm").find("input").addClass("is-invalid");
 											error_count+=1;
@@ -330,19 +336,24 @@
 									});
 									if(error_count){return false;}
 									
-									// 修改名字成功
-									edited_person.find("td").first().text(name);
+									// 修改名字與帳目、條件名字
+									edited_person.find("td").first().text(name_new);
+									name_edit_expense_condition(name_origin,name_new);
+									
+									// 修改成功
 									$.alert({
 										title: "",
 										type: "green",
-										content: "已修改朋友名字為："+name,
+										content: "已修改朋友名字為："+name_new,
 										autoClose: 'okBtn|1',
 										buttons: {
 											okBtn: {
 												btnClass: "btn-green",
 												text:"OK",
 												keys: ["esc","enter"],
-												action:	function(){}
+												action:	function(){
+												
+												}
 											}
 										}
 									});
@@ -364,7 +375,7 @@
 							});
 							
 							// 預覽輸入框
-							$(".jconfirm").find("input").get(0).setSelectionRange(name.length, name.length);
+							$(".jconfirm").find("input").get(0).setSelectionRange(name_origin.length, name_origin.length);
 							$(".jconfirm").find("input").focus();
 							
 							// bind to events
@@ -377,6 +388,45 @@
 						},
 					});
 				});
+			}
+			
+			// 修改帳目、條件中的名字
+			function name_edit_expense_condition(name_origin,name_new){
+				
+				// 修改條件名字
+				$(".form_split_condition table tbody b").each(function(){
+					if($(this).text()==name_origin){
+						$(this).text(name_new);
+						if($(this).parent().parent().data("split_condition_detail").former_name==name_origin){
+							$(this).parent().parent().data("split_condition_detail").former_name=name_new;
+						}
+						else if($(this).parent().parent().data("split_condition_detail").latter_name==name_origin){
+							$(this).parent().parent().data("split_condition_detail").latter_name=name_new;
+						}
+					}
+				})
+				
+				// 修改帳目名字
+				$(".form_expense table .consumer_name").each(function(){
+					if($(this).text()==name_origin){
+						$(this).text(name_new);
+						for(var i=0;i<$(this).parent().parent().data("expense_detail").consumption_consumer.length;i++){
+							if($(this).parent().parent().data("expense_detail").consumption_consumer[i]==name_origin){
+								$(this).parent().parent().data("expense_detail").consumption_consumer[i]=name_new;
+							}
+						}
+					}
+				})
+				$(".form_expense table .payer_name").each(function(){
+					if($(this).text()==name_origin){
+						$(this).text(name_new);
+						for(var i=0;i<$(this).parent().parent().data("expense_detail").pay_payer.length;i++){
+							if($(this).parent().parent().data("expense_detail").pay_payer[i]==name_origin){
+								$(this).parent().parent().data("expense_detail").pay_payer[i]=name_new;
+							}
+						}
+					}
+				})
 			}
 			
 			// 新增帳目按鈕事件
