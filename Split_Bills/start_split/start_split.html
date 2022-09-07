@@ -216,29 +216,51 @@
 					// 取得必要資訊
 					let deleted_person=$(this).parent().parent();
 					let deleted_person_index=$(this).parent().parent().index();
-					let name=$(this).parent().parent().find("td").first().text();
+					let name_deleted=$(this).parent().parent().find("td").first().text();
 					
 					// 彈出刪除確認框
 					$.confirm({
 						title: "確定刪除此人？",
-						content: name,
+						content: name_deleted,
 						buttons: {
 							deleteBtn: {
 								text: "刪除",
 								btnClass: 'btn-red',
 								keys: ['enter','shift'],
 								action: function(){
+								
+									// 檢查名字是否存在於帳目、條件
+									if(!name_delete_expense_condition(name_deleted)){
+										$.alert({
+											title: "",
+											type: "red",
+											content: "<b>請先刪除相關帳目、條件</b>",
+											buttons: {
+												okBtn: {
+													btnClass: "btn-red",
+													text:"OK",
+													keys: ["esc","enter"],
+													action:	function(){
+													}
+												}
+											}
+										});
+										this.$$cancelBtn.click();
+										return false;
+									}
+									
 									$.alert({
 										title: "",
 										type: "green",
-										content: '刪除 '+name+' 成功',
+										content: '刪除 '+name_deleted+' 成功',
 										autoClose: 'okBtn|1',
 										buttons: {
 											okBtn: {
 												btnClass: "btn-green",
 												text:"OK",
 												keys: ['esc','enter'],
-												action:	function(){}
+												action:	function(){
+												}
 											}
 										}
 									});
@@ -267,6 +289,37 @@
 						}
 					});
 				});
+			}
+			
+			// 檢查名字是否存在於帳目、條件
+			function name_delete_expense_condition(name_deleted){
+				let name_exist=0;
+				
+				// 檢查條件
+				$(".form_split_condition table tbody b").each(function(){
+					if($(this).text()==name_deleted){
+						name_exist=1;
+						return false;
+					}
+				})
+				
+				// 修改帳目名字
+				$(".form_expense table .consumer_name").each(function(){
+					if($(this).text()==name_deleted){
+						name_exist=1;
+						return false;
+					}
+				})
+				$(".form_expense table .payer_name").each(function(){
+					if($(this).text()==name_deleted){
+						name_exist=1;
+						return false;
+					}
+				})
+				
+				// 回傳結果
+				if(name_exist){return false;}
+				else{return true;}
 			}
 			
 			// 名字修改按鈕事件
@@ -352,7 +405,6 @@
 												text:"OK",
 												keys: ["esc","enter"],
 												action:	function(){
-												
 												}
 											}
 										}
@@ -1976,6 +2028,7 @@
 					split_condition_edit_target=split_condition_edit_instruction
 				}
 				
+				let split_condition_edit_target_index=split_condition_edit_target.index();
 				split_condition_edit_target.click(function(){
 					
 					// 取得必要資訊
@@ -2034,6 +2087,69 @@
 								*/
 							'</div>',
 						buttons: {
+							deleteBtn: {
+								text: "刪除",
+								btnClass: 'btn-red',
+								keys: ["delete"],
+								action: function(){
+									$.alert({
+										title: "確定刪除此條件？",
+										content: '',
+										buttons: {
+											deleteBtn: {
+												text: "刪除",
+												btnClass: 'btn-red',
+												keys: ["enter","delete","shift"],
+												action: function(){
+													$.alert({
+														title: "",
+														type: "green",
+														content: '<b>刪除條件成功</b>',
+														autoClose: 'okBtn|1',
+														buttons: {
+															okBtn: {
+																btnClass: "btn-green",
+																text:"OK",
+																keys: ['esc','enter'],
+																action:	function(){
+																}
+															}
+														}
+													});
+													
+													// 刪除條件並修改後續編號
+													split_condition_edit_target.remove();
+													$(".form_split_condition table tbody tr").each(function(index){
+														if(index>=split_condition_edit_target_index){
+															$(this).find("th").text(index+1);
+														}
+													});
+													
+													// 若已經沒有條件則清除Table
+													if(!$(".form_split_condition table tbody tr").length){
+														$("#split_condition_table").remove();
+													}
+													
+													// 按下原confirm的取消紐
+													$(".jconfirm").each(function(){
+														if($(this).find(".btn-group").length){
+															$(this).find(".jconfirm-buttons .btn-default").click();
+														}
+													});
+												}
+											},
+											cancelBtn: {
+												text:"取消",
+												keys: ['esc'],
+												action:	function(){
+												}
+											}
+										}
+									});
+									
+									return false;
+								}
+							},
 							formSubmit: {
 								text: "確認",
 								btnClass: 'btn-blue',
