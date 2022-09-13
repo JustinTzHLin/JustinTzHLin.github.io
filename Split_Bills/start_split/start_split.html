@@ -46,6 +46,9 @@
 				
 				// 帳目計算按鈕是否顯現
 				hide_bills_compute_btn();
+				
+				// jquery-confirm預設
+				jquery_confirm_default();
 			});
 			
 			// 新增朋友按鈕事件
@@ -2570,6 +2573,14 @@
 						}
 					}
 				});
+			}
+			
+			// jquery-confirm預設
+			function jquery_confirm_default(){
+				jconfirm.defaults = {
+					backgroundDismiss: false,
+					backgroundDismissAnimation: '',
+				};
 			}
 			
 			// 權責優先法
