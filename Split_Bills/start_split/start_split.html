@@ -2645,7 +2645,8 @@
 				backtrack(bill_array,index_now,step_now,process_now){
 					
 					// 確認是否為無效率Process
-					
+					let min_step_left=this.get_creditor_debtor_num(bill_array);
+					if((step_now+min_step_left)>this.min_step){return false;}
 					
 					if(index_now==bill_array.length){
 						if(step_now<this.min_step){
@@ -2687,13 +2688,16 @@
 				}
 				
 				// 獲得目前債權人與債務人之人數
-				/*get_creditor_debtor_num(bill_array){
+				get_creditor_debtor_num(bill_array){
 					let creditor_num=0;
 					let debtor_num=0;
 					for(var i=0;i<bill_array.length;i++){
-						if(bill_array[i]<0){
+						if(bill_array[i]<0){debtor_num+=1;}
+						else if(bill_array[i]>0){creditor_num+=1;}
 					}
-				}*/
+					let min_step_left=Math.min(creditor_num,debtor_num);
+					return min_step_left;
+				}
 			}
 			
 			// 測試計算
