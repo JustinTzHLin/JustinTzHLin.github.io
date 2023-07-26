@@ -2639,8 +2639,14 @@
 			
 			// 窮舉計算法–進階版
 			// 不會有身分改變 可用
+			// 透過提前結束無效率process節省資源
+			// 如果剩下3個債務人 5個債權人 則最低步數需要再增加5
 			class exhaustive_method_2{
 				backtrack(bill_array,index_now,step_now,process_now){
+					
+					// 確認是否為無效率Process
+					
+					
 					if(index_now==bill_array.length){
 						if(step_now<this.min_step){
 							this.min_step=step_now;
@@ -2679,6 +2685,15 @@
 					this.backtrack(bill_array,0,0,[]);
 					return [this.min_step,this.split_process];
 				}
+				
+				// 獲得目前債權人與債務人之人數
+				/*get_creditor_debtor_num(bill_array){
+					let creditor_num=0;
+					let debtor_num=0;
+					for(var i=0;i<bill_array.length;i++){
+						if(bill_array[i]<0){
+					}
+				}*/
 			}
 			
 			// 測試計算
@@ -2694,7 +2709,7 @@
 			console.log(test_s2.min_transfer_step([3, 3, 3, 3, -4, -4, -4]));
 			console.log(test_s2.min_transfer_step([30, 20, -10, -40]));
 			console.log(test_s2.min_transfer_step([80,-30,-50]));
-			console.log(test_s2.min_transfer_step([-220, -200, -30, 220, 230, -220, -200, -30, 220, 230, -220, -200, -30, 220, 230]));
+			//console.log(test_s2.min_transfer_step([-220, -200, -30, 220, 230, -220, -200, -30, 220, 230, -220, -200, -30, 220, 230]));
 		</script>
 		<style type="text/css">
 			.title{
