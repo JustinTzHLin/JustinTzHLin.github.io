@@ -2648,6 +2648,7 @@
 					let min_step_left=this.get_creditor_debtor_num(bill_array);
 					if((step_now+min_step_left)>this.min_step){return false;}
 					
+					// 代表已結束運算
 					if(index_now==bill_array.length){
 						if(step_now<this.min_step){
 							this.min_step=step_now;
@@ -2655,6 +2656,7 @@
 						}
 						return false;
 					}
+					
 					if(bill_array[index_now]<=0){
 						this.backtrack(bill_array,index_now+1,step_now,process_now);
 					}
@@ -2816,7 +2818,7 @@
 											<button type="button" class="btn btn-outline-dark new_expense_btn" name="new_expense_btn">新增帳目</button>
 										</div>
 										<div class="d-grid col-2">
-											<button type="button" class="btn btn-primary bills_compute_btn" name="bills_compute_btn">計算</button>
+											<button type="button" class="btn btn-primary bills_compute_btn" name="bills_compute_btn" style="display:none;">計算</button>
 										</div>
 									</div>
 								</div>
