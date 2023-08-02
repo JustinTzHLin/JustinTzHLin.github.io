@@ -2035,13 +2035,15 @@
 				//測試
 				$(".test_confirm").click(function(){
 					$(this).append("<button type='button' class='btn btn-primary test_confirm_btn'></button>");
-					$(".test_confirm_btn").click(function(){
-						$.alert({
-							title: 'Alert!',
-							content: 'Simple alert!',
-						});
+					$(".test_confirm_btn").click();
+					$(".test_confirm_btn").remove();
+				});
+				$(".test_confirm_btn").click(function(){
+					$.alert({
+						title: 'Alert!',
+						content: 'Simple alert!',
 					});
-				})
+				});
 			}
 			
 			// 條件修改按鈕事件
