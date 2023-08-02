@@ -301,7 +301,6 @@
 				$(".form_split_condition table tbody b").each(function(){
 					if($(this).text()==name_deleted){
 						name_exist=1;
-						console.log("condition_name");
 						return false;
 					}
 				})
@@ -310,14 +309,12 @@
 				$(".form_expense table .consumer_name").each(function(){
 					if($(this).text()==name_deleted){
 						name_exist=1;
-						console.log("consumer_name");
 						return false;
 					}
 				})
 				$(".form_expense table .payer_name").each(function(){
 					if($(this).text()==name_deleted){
 						name_exist=1;
-						console.log("payer_name");
 						return false;
 					}
 				})
@@ -864,11 +861,17 @@
 				
 				$(".jconfirm .expense_type_select").change(function(){
 					if($(this).prop("checked")){
-						$(".jconfirm #consumer_overview .input-group").hide();
+						//$(".jconfirm #consumer_overview .input-group").hide();
+						$(".jconfirm #consumer_overview .input-group consumption_consumer").prop("disabled",true);
+						$(".jconfirm #consumer_overview .input-group consumption_charge").prop("readonly",true);
+						$(".jconfirm #consumer_overview .input-group consumption_description").prop("readonly",true);
 						$(".jconfirm .consumer_add_btn").css("visibility","hidden");
 					}
 					else{
-						$(".jconfirm #consumer_overview .input-group").show();
+						//$(".jconfirm #consumer_overview .input-group").show();
+						$(".jconfirm #consumer_overview .input-group consumption_consumer").prop("disabled",false);
+						$(".jconfirm #consumer_overview .input-group consumption_charge").prop("readonly",false);
+						$(".jconfirm #consumer_overview .input-group consumption_description").prop("readonly",false);
 						$(".jconfirm .consumer_add_btn").css("visibility","visible");
 					}
 				});
