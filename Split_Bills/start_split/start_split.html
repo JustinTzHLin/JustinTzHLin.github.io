@@ -2035,9 +2035,14 @@
 				//測試
 				function set_test_confirm_btn(){
 					$(".test_confirm_btn").click(function(){
-						$.alert({
+						$.confirm({
 							title: 'Alert!',
 							content: 'Simple alert!',
+							buttons: {
+								cancel: function () {
+									$(".test_confirm_btn").remove();
+								}
+							}
 						});
 					});
 				}
@@ -2045,7 +2050,6 @@
 					$(this).append("<button type='button' class='btn btn-primary test_confirm_btn'></button>");
 					set_test_confirm_btn();
 					$(".test_confirm_btn").click();
-					$(".test_confirm_btn").remove();
 				});
 			}
 			
