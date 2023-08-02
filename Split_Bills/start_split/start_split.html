@@ -2034,9 +2034,12 @@
 				
 				//測試
 				$(".test_confirm").click(function(){
-					$.alert({
-						title: 'Alert!',
-						content: 'Simple alert!',
+					$(this).append("<button type='button' class='btn btn-primary test_confirm_btn'></button>");
+					$(".test_confirm_btn").click(function(){
+						$.alert({
+							title: 'Alert!',
+							content: 'Simple alert!',
+						});
 					});
 				})
 			}
