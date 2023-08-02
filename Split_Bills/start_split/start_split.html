@@ -2033,16 +2033,19 @@
 				split_condition_edit("last");
 				
 				//測試
+				function set_test_confirm_btn(){
+					$(".test_confirm_btn").click(function(){
+						$.alert({
+							title: 'Alert!',
+							content: 'Simple alert!',
+						});
+					});
+				}
 				$(".test_confirm").click(function(){
 					$(this).append("<button type='button' class='btn btn-primary test_confirm_btn'></button>");
+					set_test_confirm_btn();
 					$(".test_confirm_btn").click();
 					$(".test_confirm_btn").remove();
-				});
-				$(".test_confirm_btn").click(function(){
-					$.alert({
-						title: 'Alert!',
-						content: 'Simple alert!',
-					});
 				});
 			}
 			
