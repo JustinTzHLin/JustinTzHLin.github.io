@@ -2033,14 +2033,14 @@
 				split_condition_edit("last");
 				
 				//測試
-				
 				$(".test_confirm").click(function(){
-					$(this).append("<button type='button' class='btn btn-primary test_confirm_btn'></button>");
+					$(this).parent().append("<button type='button' class='btn btn-primary test_confirm_btn'></button>");
 					set_test_confirm_btn();
 					$(".test_confirm_btn").click();
 				});
 				function set_test_confirm_btn(){
 					$(".test_confirm_btn").click(function(){
+						console.log("clicked");
 						$.confirm({
 							title: 'Alert!',
 							content: 'Simple alert!',
