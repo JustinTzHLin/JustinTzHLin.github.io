@@ -865,14 +865,20 @@
 						$(".jconfirm #consumer_overview .input-group .consumption_consumer").prop("disabled",true);
 						$(".jconfirm #consumer_overview .input-group .consumption_charge").prop("readonly",true);
 						$(".jconfirm #consumer_overview .input-group .consumption_description").prop("readonly",true);
-						$(".jconfirm .consumer_add_btn").css("visibility","hidden");
+						$(".jconfirm #consumer_overview .input-group .consumer_delete_btn").prop("disabled",true);
+						$(".jconfirm #consumer_overview .input-group .consumer_delete_btn").css("background-color","#e9ecef");
+						$(".jconfirm .consumer_add_btn").prop("disabled",true);
+						//$(".jconfirm .consumer_add_btn").css("visibility","hidden");#e9ecef
 					}
 					else{
 						//$(".jconfirm #consumer_overview .input-group").show();
 						$(".jconfirm #consumer_overview .input-group .consumption_consumer").prop("disabled",false);
 						$(".jconfirm #consumer_overview .input-group .consumption_charge").prop("readonly",false);
 						$(".jconfirm #consumer_overview .input-group .consumption_description").prop("readonly",false);
-						$(".jconfirm .consumer_add_btn").css("visibility","visible");
+						$(".jconfirm #consumer_overview .input-group .consumer_delete_btn").prop("disabled",false);
+						$(".jconfirm #consumer_overview .input-group .consumer_delete_btn").css("background-color","transparent");
+						$(".jconfirm .consumer_add_btn").prop("disabled",false);
+						//$(".jconfirm .consumer_add_btn").css("visibility","visible");
 					}
 				});
 			}
@@ -2719,7 +2725,7 @@
 			let test_s2=new exhaustive_method_2();
 			console.log(test_s2.min_transfer_step([-220, -200, -30, 220, 230]));
 			console.log(test_s2.min_transfer_step([3, 3, 3, 3, -4, -4, -4]));
-			console.log(test_s2.min_transfer_step([-220, -200, -30, 220, 230, -220, -200, -30, 220, 230, -220, -200, -30, 220, 230, -220, 220]));
+			//console.log(test_s2.min_transfer_step([-220, -200, -30, 220, 230, -220, -200, -30, 220, 230, -220, -200, -30, 220, 230, -220, 220]));
 		</script>
 		<style type="text/css">
 			.title{
