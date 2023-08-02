@@ -301,6 +301,7 @@
 				$(".form_split_condition table tbody b").each(function(){
 					if($(this).text()==name_deleted){
 						name_exist=1;
+						console.log("condition_name");
 						return false;
 					}
 				})
@@ -309,18 +310,20 @@
 				$(".form_expense table .consumer_name").each(function(){
 					if($(this).text()==name_deleted){
 						name_exist=1;
+						console.log("consumer_name");
 						return false;
 					}
 				})
 				$(".form_expense table .payer_name").each(function(){
 					if($(this).text()==name_deleted){
 						name_exist=1;
+						console.log("payer_name");
 						return false;
 					}
 				})
 				
 				// 回傳結果
-				if(name_exist){return false;}
+				if(name_exist){console.log("name_exist"); return false;}
 				else{return true;}
 			}
 			
