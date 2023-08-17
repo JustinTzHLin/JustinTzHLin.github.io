@@ -1849,9 +1849,12 @@
 								action:	function(){}
 							}
 						},
+						//測試提示
 						onOpenBefore: function (data, status, xhr) {
-							console.log("content_in");
-							$(".jconfirm-title-c").append("<div>testing</div>");
+							$(".jconfirm-title-c").append("<button type='button' class='bi bi-question-circle split_condition_tip'></button>");
+							$(".split_condition_tip").click(function(){
+								console.log("in");
+							});
 						},
 						onContentReady: function () {
 							

@@ -71,6 +71,12 @@
 .split_condition_table_main{
 	cursor:pointer;
 }
+.split_condition_tip{
+	cursor:pointer;
+	margin:-200px;
+	border:transparent;
+	background:transparent;
+}
 
 .jconfirm-title{
 	font-weight:bold;
