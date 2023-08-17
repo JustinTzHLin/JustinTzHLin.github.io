@@ -134,6 +134,24 @@
 								action:	function(){}
 							}
 						},
+						//測試close
+						onClose: function () {
+							$.alert({
+								title: "",
+								type: "green",
+								content: "已新增朋友：",
+								autoClose: 'okBtn|1',
+								buttons: {
+									okBtn: {
+										btnClass: "btn-green",
+										text:"OK",
+										keys: ["esc","enter"],
+										action:	function(){
+										}
+									}
+								}
+							});
+						},
 						onContentReady: function () {
 							
 							// bind to events
@@ -1852,7 +1870,7 @@
 						//測試提示
 						onOpenBefore: function () {
 							$(".jconfirm-title-c").append("<button type='button' class='bi bi-question-circle split_condition_tip_btn'></button>");
-							$(".split_condition_tip").click(function(){
+							$(".split_condition_tip_btn").click(function(){
 								console.log("in");
 							});
 						},
