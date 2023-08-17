@@ -1163,7 +1163,8 @@
 
             if(!el)
                 return false;
-
+            //測試
+            console.log(el);
             var offset = el.offset();
 
             var iTop = el.outerHeight() / 2;
