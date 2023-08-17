@@ -2013,8 +2013,7 @@
 						'<table id="split_condition_table" class="table table-hover table-bordered table-bg">'+
 							'<thead>'+
 								'<tr>'+
-									//測試
-									'<th scope="col" style="vertical-align:middle;"><button type="button" class="btn btn-primary test_confirm_btn">#</button></th>'+
+									'<th scope="col" style="vertical-align:middle;">#</th>'+
 									'<th scope="col" style="vertical-align:middle;"></th>'+
 								'</tr>'+
 							'</thead>'+
@@ -2032,14 +2031,6 @@
 				// 條件修改按鈕事件
 				split_condition_edit("last");
 				
-				//測試confirm
-				/*
-				$(".test_confirm").click(function(){
-					$(this).parent().append("<button type='button' class='btn btn-primary test_confirm_btn'></button>");
-					set_test_confirm_btn();
-					$(".test_confirm_btn").click();
-				});
-				*/
 				set_test_confirm_btn();
 				function set_test_confirm_btn(){
 					$(".test_confirm_btn").click(function(){
@@ -2091,7 +2082,6 @@
 					$.confirm({
 						title: "修改條件",
 						columnClass: "large",
-						//測試
 						animateFromElement: false,
 						animation: 'scale',
 						closeAnimation: 'zoom',
