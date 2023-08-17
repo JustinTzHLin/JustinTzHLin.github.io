@@ -1849,7 +1849,11 @@
 								action:	function(){}
 							}
 						},
+						onOpen: function () {
+							$(".jconfirm-title-c").append("<div>testing</div>");
+						},
 						onContentReady: function () {
+							
 							$(".jconfirm .btn-group input").change(function(){
 							
 								// 取得目前值
