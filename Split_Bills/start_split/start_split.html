@@ -1849,7 +1849,8 @@
 								action:	function(){}
 							}
 						},
-						contentLoaded: function () {
+						contentLoaded: function (data, status, xhr) {
+							console.log("content_in");
 							$(".jconfirm-title-c").append("<div>testing</div>");
 						},
 						onContentReady: function () {
