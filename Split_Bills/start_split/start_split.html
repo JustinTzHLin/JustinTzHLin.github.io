@@ -1849,7 +1849,7 @@
 								action:	function(){}
 							}
 						},
-						contentLoaded: function (data, status, xhr) {
+						onOpenBefore: function (data, status, xhr) {
 							console.log("content_in");
 							$(".jconfirm-title-c").append("<div>testing</div>");
 						},
