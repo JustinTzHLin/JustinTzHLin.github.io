@@ -1850,8 +1850,8 @@
 							}
 						},
 						//測試提示
-						onOpenBefore: function (data, status, xhr) {
-							$(".jconfirm-title-c").append("<button type='button' class='bi bi-question-circle split_condition_tip'></button>");
+						onOpenBefore: function () {
+							$(".jconfirm-title-c").append("<button type='button' class='bi bi-question-circle split_condition_tip_btn'></button>");
 							$(".split_condition_tip").click(function(){
 								console.log("in");
 							});
