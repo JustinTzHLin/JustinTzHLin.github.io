@@ -2091,6 +2091,10 @@
 					$.confirm({
 						title: "修改條件",
 						columnClass: "large",
+						//測試
+						animateFromElement: false,
+						animation: 'scale',
+						closeAnimation: 'zoom',
 						content: ''+
 							'<div class="btn-group mb-3" role="group" aria-label="Basic radio toggle button group" style="display:flex;padding:5px;">'+
 								'<input type="radio" class="btn-check" name="btnradio" id="paid_debt" autocomplete="off" value="paid_debt" checked>'+
@@ -2616,8 +2620,6 @@
 				jconfirm.defaults = {
 					backgroundDismiss: false,
 					backgroundDismissAnimation: '',
-					animateFromElement: false,
-					animation: 'scale',
 					closeAnimation: 'zoom',
 				};
 			}
